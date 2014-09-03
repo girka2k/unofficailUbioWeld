@@ -5,3 +5,18 @@ C:\Users\Danny\Documents\Visual Studio 2012\Projects\UbioWeldingLtd\UbioWeldingL
 C:\Users\Danny\Documents\Visual Studio 2012\Projects\UbioWeldingLtd\UbioWeldingLtd\obj\Debug\UbioWeldingLtd.csprojResolveAssemblyReference.cache
 C:\kerbal\Kerbal Space Program\GameData\UbioWeldingLtd\PluginData\UbioWeldingLtd.dll
 C:\kerbal\Kerbal Space Program\GameData\UbioWeldingLtd\PluginData\UbioWeldingLtd.pdb
+\\tsclient\C\Users\girka.NIKAMED\YandexDisk\!KSP\Dev\Projects\unofficailUbioWeld\UbioWeldingLtd\obj\Debug\UbioWeldingLtd.csprojResolveAssemblyReference.cache
+\\tsclient\C\Users\girka.NIKAMED\YandexDisk\!KSP\Dev\Projects\unofficailUbioWeld\UbioWeldingLtd\obj\Debug\UbioWeldingLtd.dll
+\\tsclient\C\Users\girka.NIKAMED\YandexDisk\!KSP\Dev\Projects\unofficailUbioWeld\UbioWeldingLtd\obj\Debug\UbioWeldingLtd.pdb
+\\tsclient\C\Users\girka.NIKAMED\YandexDisk\!KSP\Dev\Projects\unofficailUbioWeld\UbioWeldingLtd\bin\Debug\UbioWeldingLtd.dll
+\\tsclient\C\Users\girka.NIKAMED\YandexDisk\!KSP\Dev\Projects\unofficailUbioWeld\UbioWeldingLtd\bin\Debug\UbioWeldingLtd.pdb
+\\tsclient\C\Users\girka.NIKAMED\YandexDisk\!KSP\Dev\Projects\unofficailUbioWeld\UbioWeldingLtd\bin\Debug\System.Core.dll
+\\tsclient\C\Users\girka.NIKAMED\YandexDisk\!KSP\Dev\Projects\unofficailUbioWeld\UbioWeldingLtd\bin\Debug\System.dll
+\\tsclient\C\Users\girka.NIKAMED\YandexDisk\!KSP\Dev\Projects\unofficailUbioWeld\UbioWeldingLtd\bin\Debug\System.Xml.dll
+\\girka-hp\C$\Users\girka.NIKAMED\YandexDisk\!KSP\Dev\Projects\unofficailUbioWeld\UbioWeldingLtd\obj\Debug\UbioWeldingLtd.pdb
+\\girka-hp\C$\Users\girka.NIKAMED\YandexDisk\!KSP\Dev\Projects\unofficailUbioWeld\UbioWeldingLtd\bin\Debug\UbioWeldingLtd.dll
+\\girka-hp\C$\Users\girka.NIKAMED\YandexDisk\!KSP\Dev\Projects\unofficailUbioWeld\UbioWeldingLtd\bin\Debug\UbioWeldingLtd.pdb
+\\girka-hp\C$\Users\girka.NIKAMED\YandexDisk\!KSP\Dev\Projects\unofficailUbioWeld\UbioWeldingLtd\bin\Debug\System.Core.dll
+\\girka-hp\C$\Users\girka.NIKAMED\YandexDisk\!KSP\Dev\Projects\unofficailUbioWeld\UbioWeldingLtd\bin\Debug\System.dll
+\\girka-hp\C$\Users\girka.NIKAMED\YandexDisk\!KSP\Dev\Projects\unofficailUbioWeld\UbioWeldingLtd\bin\Debug\System.Xml.dll
+\\girka-hp\C$\Users\girka.NIKAMED\YandexDisk\!KSP\Dev\Projects\unofficailUbioWeld\UbioWeldingLtd\obj\Debug\UbioWeldingLtd.dll

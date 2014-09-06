@@ -200,17 +200,18 @@ namespace UbioWeldingLtd
 			//process the welding
 #if (DEBUG)
 			Debug.ClearDeveloperConsole();
-#endif
 			Debug.Log(string.Format("{0}{1}", Constants.logPrefix, Constants.logVersion));
 			Debug.Log(string.Format("{0}{1}", Constants.logPrefix, Constants.logStartWeld));
-
+#endif
 			bool warning = false;
 			_welder = new Welder();
 
             WeldingReturn ret = _welder.weldThisPart(partToWeld);
 			if (0 > ret)
 			{
+#if (DEBUG)
 				Debug.Log(string.Format("{0}{1}", Constants.logPrefix, Constants.logEndWeld));
+#endif
 				_state = DisplayState.weldError;
 				return;
 			}
@@ -227,7 +228,9 @@ namespace UbioWeldingLtd
 					ret = _welder.weldThisPart(child);
 					if (0 > ret)
 					{
+#if (DEBUG)
 						Debug.Log(string.Format("{0}{1}", Constants.logPrefix, Constants.logEndWeld));
+#endif
 						_state = DisplayState.weldError;
 						return;
 					}
@@ -240,7 +243,9 @@ namespace UbioWeldingLtd
 			_welder.processNewCoM();
 			_scrollMod = Vector2.zero;
 			_scrollRes = Vector2.zero;
+#if (DEBUG)
             Debug.Log(string.Format("{0} {1} | {2} Parts welded", Constants.logPrefix, Constants.logEndWeld, _welder.NbParts));
+#endif
 			if (warning)
 			{
 				_state = DisplayState.weldWarning;
@@ -510,8 +515,9 @@ namespace UbioWeldingLtd
 		 */
 		private void WriteCfg(string filepath)
 		{
+#if (DEBUG)
 			Debug.Log(string.Format("{0}{1}{2}", Constants.logPrefix, Constants.logWritingFile, filepath));
-
+#endif
 			_welder.CreateFullConfigNode();
 
 			_welder.FullConfigNode.Save(filepath);

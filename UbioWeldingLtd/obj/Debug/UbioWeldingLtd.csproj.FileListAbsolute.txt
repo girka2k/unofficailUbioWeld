@@ -23,6 +23,6 @@ C:\kerbal\Kerbal Space Program\GameData\UbioWeldingLtd\PluginData\UbioWeldingLtd
 D:\Games\KSP Source Projects\unofficailUbioWeld\UbioWeldingLtd\bin\Debug\UbioWeldingLtd.dll
 D:\Games\KSP Source Projects\unofficailUbioWeld\UbioWeldingLtd\bin\Debug\UbioWeldingLtd.pdb
 D:\Games\KSP Source Projects\unofficailUbioWeld\UbioWeldingLtd\bin\Debug\Assembly-CSharp-firstpass.dll
-D:\Games\KSP Source Projects\unofficailUbioWeld\UbioWeldingLtd\obj\Debug\UbioWeldingLtd.csprojResolveAssemblyReference.cache
 D:\Games\KSP Source Projects\unofficailUbioWeld\UbioWeldingLtd\obj\Debug\UbioWeldingLtd.dll
 D:\Games\KSP Source Projects\unofficailUbioWeld\UbioWeldingLtd\obj\Debug\UbioWeldingLtd.pdb
+D:\Games\KSP Source Projects\unofficailUbioWeld\UbioWeldingLtd\obj\Debug\UbioWeldingLtd.csprojResolveAssemblyReference.cache

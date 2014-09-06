@@ -97,25 +97,25 @@ namespace UbioWeldingLtd
 		private static bool _dontProcessMasslessParts = false;
 		private static bool _runInTestMode = false;
 
-        public static bool includeAllNodes
-        {
-            get { return _includeAllNodes; }
-            set { _includeAllNodes = value; }
-        }
+		public static bool includeAllNodes
+		{
+			get { return _includeAllNodes; }
+			set { _includeAllNodes = value; }
+		}
 
-        public static bool dontProcessMasslessParts
-        {
-            get { return _dontProcessMasslessParts; }
-            set { _dontProcessMasslessParts = value; }
-        }
+		public static bool dontProcessMasslessParts
+		{
+			get { return _dontProcessMasslessParts; }
+			set { _dontProcessMasslessParts = value; }
+		}
 
-        public static bool runInTestMode
-        {
-            get { return _runInTestMode; }
-            set { _runInTestMode = value; }
-        }
-        
-        public string Name
+		public static bool runInTestMode
+		{
+			get { return _runInTestMode; }
+			set { _runInTestMode = value; }
+		}
+
+		public string Name
 		{
 			get { return _name; }
 			set
@@ -413,7 +413,7 @@ namespace UbioWeldingLtd
 				string newconfigname = config.name.Replace('_', '.');
 #if (DEBUG)
 				//Girka2K - too many spam in LOG from here
-				//                Debug.Log(string.Format("{0}.config name {1}", Constants.logPrefix, newconfigname));
+				//Debug.Log(string.Format("{0}.config name {1}", Constants.logPrefix, newconfigname));
 #endif
 				if (System.String.Equals(partname, newconfigname, System.StringComparison.Ordinal))
 				{
@@ -423,7 +423,7 @@ namespace UbioWeldingLtd
 #if (DEBUG)
 			Debug.Log(string.Format("{0}.Found {1} config files", Constants.logPrefix, matchingPartConfigs.Count));
 #endif
-			if (0 >= matchingPartConfigs.Count)
+			if (matchingPartConfigs.Count >= 0)
 			{
 				//Missing Config File: Error
 				Debug.LogError(string.Format("{0}{1}.{2} {3}", Constants.logError, Constants.logPrefix, Constants.msgCfgMissing, partname));
@@ -555,9 +555,8 @@ namespace UbioWeldingLtd
 					ConfigNode[] originalModules = cfg.config.GetNodes(Constants.weldModuleNode);
 #if (DEBUG)
 					Debug.Log(string.Format("{0}..Config {1} has {2} {3} node", Constants.logPrefix, cfg.name, originalModules.Length, Constants.weldModuleNode));
+					Debug.Log(string.Format("{0}.. running in Alewx Testmode = {1}", Constants.logPrefix, runInTestMode));
 #endif
-
-					Debug.Log(string.Format("{0}| running in Alewx Testmode = {1}", Constants.logPrefix, runInTestMode));
 					if (runInTestMode)
 					{
 						AlexTestModuleMerge(partname, cfg);
@@ -592,7 +591,7 @@ namespace UbioWeldingLtd
 								_fxData.AddValue(fxname, fxvalue);
 								Debug.Log(string.Format("{0}..{1}{2}", Constants.logPrefix, Constants.logFxAdd, fxname));
 							}
-							if (null != fx.sfx)
+							if (fx.sfx != null)
 							{
 								_fxData.AddValue(fx.sfx.name, fx.name);
 								Debug.Log(string.Format("{0}..{1}{2}", Constants.logPrefix, Constants.logFxAdd, fx.sfx.name));
@@ -664,10 +663,10 @@ namespace UbioWeldingLtd
 			_dragModel = newpart.dragModelType;
 
 			//average crash, breaking and temp
-			_crashTolerance = (0 == _partNumber) ? newpart.crashTolerance : (_crashTolerance + newpart.crashTolerance) * 0.75f;
-			_breakingForce = (0 == _partNumber) ? newpart.breakingForce : (_breakingForce + newpart.breakingForce) * 0.75f;
-			_breakingTorque = (0 == _partNumber) ? newpart.breakingTorque : (_breakingTorque + newpart.breakingTorque) * 0.75f;
-			_maxTemp = (0 == _partNumber) ? newpart.maxTemp : (_maxTemp + newpart.maxTemp) * 0.5f;
+			_crashTolerance = (_partNumber == 0) ? newpart.crashTolerance : (_crashTolerance + newpart.crashTolerance) * 0.75f;
+			_breakingForce = (_partNumber == 0) ? newpart.breakingForce : (_breakingForce + newpart.breakingForce) * 0.75f;
+			_breakingTorque = (_partNumber == 0) ? newpart.breakingTorque : (_breakingTorque + newpart.breakingTorque) * 0.75f;
+			_maxTemp = (_partNumber ==0) ? newpart.maxTemp : (_maxTemp + newpart.maxTemp) * 0.5f;
 
 			//Phisics signifance
 			if (newpart.PhysicsSignificance != 0 && _physicsSignificance != -1)
@@ -675,7 +674,7 @@ namespace UbioWeldingLtd
 				_physicsSignificance = newpart.PhysicsSignificance;
 			}
 
-			if (0 == _partNumber)
+			if (_partNumber == 0)
 			{
 				//TODO: Find where to find it in game. Would that be pre .15 stuff? http://forum.kerbalspaceprogram.com/threads/7529-Plugin-Posting-Rules-And-Official-Documentation?p=156430&viewfull=1#post156430
 				_module = "Part";
@@ -701,12 +700,17 @@ namespace UbioWeldingLtd
 		private void AlexTestModuleMerge(string partname, UrlDir.UrlConfig configuration)
 		{
 			ConfigNode[] originalModules = configuration.config.GetNodes(Constants.weldModuleNode);
+			string newModuleName = "";
+			bool exist = false;
+			bool boolResult = false;
+			float floatResult = 0f;
+			bool skip = false;
 
 			foreach (ConfigNode originalModule in originalModules)
 			{
 				ConfigNode newModule = originalModule.CreateCopy();
-				string newModuleName = newModule.GetValue(newModule.values.DistinctNames()[0]);
-				bool exist = false;
+				newModuleName = newModule.GetValue(newModule.values.DistinctNames()[0]);
+				exist = false;
 
 				foreach (ConfigNode existingNewModule in _modulelist)
 				{
@@ -716,82 +720,186 @@ namespace UbioWeldingLtd
 					}
 					else
 					{
-						Debug.LogError(string.Format("{0}- Alex Modulemerger - {1} Module already exists!!!", Constants.logPrefix, existingNewModule.GetValue(existingNewModule.values.DistinctNames()[0])));
-						foreach (string ModuleAttribute in existingNewModule.values.DistinctNames())
+#if (DEBUG)
+						Debug.LogError(string.Format("{0}.. {1} Module already exists!!!", Constants.logPrefix, existingNewModule.GetValue(existingNewModule.values.DistinctNames()[0])));
+#endif
+						if (existingNewModule.values.DistinctNames().Length < 2)
 						{
-							//showing off all the values and their attributes of theat particular MODULE
-							bool boolResult = false;
-							float floatResult = 0f;
-							if (bool.TryParse(existingNewModule.GetValue(ModuleAttribute), out boolResult))
+							// making shure that the MODULE gets not duplicated in case it has no attributes
+							exist = true;
+							break;
+						}
+						else
+						{
+							skip = false;
+							foreach (string ModuleAttribute in existingNewModule.values.DistinctNames())
 							{
-								existingNewModule.SetValue(ModuleAttribute, (bool.Parse(newModule.GetValue(ModuleAttribute)) || bool.Parse(existingNewModule.GetValue(ModuleAttribute))).ToString());
-								//Debug.LogError(string.Format("{0} MODULE MERGER in {1} | {2} = {3}", Constants.logPrefix, existingNewModule.GetValue(existingNewModule.values.DistinctNames()[0]), ModuleAttribute, existingNewModule.GetValue(ModuleAttribute)));
-							}
-							else
-							{
-								if (float.TryParse(existingNewModule.GetValue(ModuleAttribute), out floatResult))
+								if (skip)
 								{
-									//merge float values if they are allowed
-									if (Constants.averagedModuleAttributes.Contains(ModuleAttribute))
-									{
-										existingNewModule.SetValue(ModuleAttribute, ((float.Parse(newModule.GetValue(ModuleAttribute)) + float.Parse(existingNewModule.GetValue(ModuleAttribute))) * 0.5f).ToString());
-									}
-									else
-									{
-										existingNewModule.SetValue(ModuleAttribute, ((float.Parse(newModule.GetValue(ModuleAttribute)) + float.Parse(existingNewModule.GetValue(ModuleAttribute)))).ToString());
-									}
+									break;
 								}
 								else
 								{
-									//if value is a string
-									if (string.IsNullOrEmpty(existingNewModule.GetValue(ModuleAttribute)))
+									boolResult = false;
+									floatResult = 0f;
+									if (bool.TryParse(existingNewModule.GetValue(ModuleAttribute), out boolResult))
 									{
-										//if the value in the confid is null or empty then set it
-										existingNewModule.SetValue(ModuleAttribute, newModule.GetValue(ModuleAttribute));
+										mergeModuleBoolValues(newModuleName, newModule, existingNewModule, ModuleAttribute);
+									}
+									else
+									{
+										if (float.TryParse(existingNewModule.GetValue(ModuleAttribute), out floatResult))
+										{
+											mergeModuleFloatValues(newModuleName, newModule, existingNewModule, ModuleAttribute);
+										}
+										else
+										{
+											mergeModuleStringValues(newModuleName, ref exist, ref skip, newModule, existingNewModule, ModuleAttribute);
+										}
 									}
 								}
+#if (DEBUG)
+								//Debug.LogError(string.Format("{0}- Alex Modulemerger - {1} | {2} = {3}", Constants.logPrefix, existingNewModule.GetValue(existingNewModule.values.DistinctNames()[0]), ModuleAttribute, existingNewModule.GetValue(ModuleAttribute)));
+#endif
 							}
-							Debug.LogError(string.Format("{0}- Alex Modulemerger - {1} | {2} = {3}", Constants.logPrefix, existingNewModule.GetValue(existingNewModule.values.DistinctNames()[0]), ModuleAttribute, existingNewModule.GetValue(ModuleAttribute)));
+							if (!skip)
+							{
+								exist = true;
+								break;
+							}
 						}
-						// making shure that the MODULE gets not duplicated in case it has no attributes
-						exist = true;
-						break;
 					}
 				}//foreach (ConfigNode existingNewModule in _modulelist)
 				if (!exist)
 				{
-					switch (newModule.GetValue(newModule.values.DistinctNames()[0]))
-					{
-						//case Constants.modStockDecouple:
-						//    {
-						//        break;
-						//    }
-						case Constants.modStockAnchdec:
-							{//Decoupler: Change node name
-								string decouplename = newModule.GetValue("explosiveNodeID") + partname + _partNumber;
-								newModule.SetValue("explosiveNodeID", decouplename);
-								break;
-							}
-						case Constants.modStockDocking:
-							{//Docking port: Change node name if any TODO: FIX This
-								if (newModule.HasValue("referenceAttachNode"))
-								{
-									string dockname = newModule.GetValue("referenceAttachNode") + partname + _partNumber;
-									newModule.SetValue("referenceAttachNode", dockname);
-								}
-								break;
-							}
-						case Constants.modStockJettison:
-							{//Fairing/Jetisson, change node name
-								string jetissonname = newModule.GetValue("bottomNodeName") + partname + _partNumber;
-								newModule.SetValue("bottomNodeName", jetissonname);
-								break;
-							}
-					}
-					_modulelist.Add(newModule);
-					Debug.Log(string.Format("{0}..{1}{2}", Constants.logPrefix, Constants.logModAdd, newModuleName));
+					addNewModule(partname, newModuleName, newModule);
 				} //if (!exist)
 			} //foreach (ConfigNode mod in modules)
+		}
+
+
+		/// <summary>
+		/// handles the correct merging of bool values in the modules
+		/// </summary>
+		/// <param name="newModuleName"></param>
+		/// <param name="newModule"></param>
+		/// <param name="existingNewModule"></param>
+		/// <param name="ModuleAttribute"></param>
+		private static void mergeModuleBoolValues(string newModuleName, ConfigNode newModule, ConfigNode existingNewModule, string ModuleAttribute)
+		{
+#if (DEBUG)
+			Debug.LogWarning(string.Format("{0}| {1} - {2} is bool", Constants.logPrefix, newModuleName, ModuleAttribute));
+#endif
+			existingNewModule.SetValue(ModuleAttribute, (bool.Parse(newModule.GetValue(ModuleAttribute)) || bool.Parse(existingNewModule.GetValue(ModuleAttribute))).ToString());
+		}
+
+
+		/// <summary>
+		/// handles the correct merging of float values in the modules
+		/// </summary>
+		/// <param name="newModuleName"></param>
+		/// <param name="newModule"></param>
+		/// <param name="existingNewModule"></param>
+		/// <param name="ModuleAttribute"></param>
+		private static void mergeModuleFloatValues(string newModuleName, ConfigNode newModule, ConfigNode existingNewModule, string ModuleAttribute)
+		{
+#if (DEBUG)
+			Debug.LogWarning(string.Format("{0}| {1} - {2} is float", Constants.logPrefix, newModuleName, ModuleAttribute));
+#endif
+			//merge float values if they are allowed
+			if (!Constants.unchangedModuleAttributes.Contains(string.Concat(newModuleName, Constants.unterline, ModuleAttribute)))
+			{
+				if (Constants.averagedModuleAttributes.Contains(string.Concat(newModuleName, Constants.unterline, ModuleAttribute)))
+				{
+					existingNewModule.SetValue(ModuleAttribute, ((float.Parse(newModule.GetValue(ModuleAttribute)) + float.Parse(existingNewModule.GetValue(ModuleAttribute))) * 0.5f).ToString());
+				}
+				else
+				{
+					existingNewModule.SetValue(ModuleAttribute, ((float.Parse(newModule.GetValue(ModuleAttribute)) + float.Parse(existingNewModule.GetValue(ModuleAttribute)))).ToString());
+				}
+			}
+		}
+
+
+		/// <summary>
+		/// handles the correct merging of string values in the modules
+		/// </summary>
+		/// <param name="newModuleName"></param>
+		/// <param name="exist"></param>
+		/// <param name="skip"></param>
+		/// <param name="newModule"></param>
+		/// <param name="existingNewModule"></param>
+		/// <param name="ModuleAttribute"></param>
+		private static void mergeModuleStringValues(string newModuleName, ref bool exist, ref bool skip, ConfigNode newModule, ConfigNode existingNewModule, string ModuleAttribute)
+		{
+#if (DEBUG)
+			Debug.LogWarning(string.Format("{0}| {1} - {2} is string", Constants.logPrefix, newModuleName, ModuleAttribute));
+#endif
+			if (Constants.breakingModuleAttributes.Contains(string.Concat(newModuleName, Constants.unterline, ModuleAttribute)))
+			{
+#if (DEBUG)
+				Debug.LogWarning(string.Format("{0}| {1} - {2} is of breaking category | {3}", Constants.logPrefix, newModuleName, ModuleAttribute, string.Equals(existingNewModule.GetValue(ModuleAttribute), newModule.GetValue(ModuleAttribute))));
+#endif
+				exist = string.Equals(existingNewModule.GetValue(ModuleAttribute), newModule.GetValue(ModuleAttribute));
+				if (!exist)
+				{
+					skip = true;
+				}
+			}
+			if (!skip)
+			{
+				if (string.IsNullOrEmpty(existingNewModule.GetValue(ModuleAttribute)))
+				{
+					//if the value in the config is null or empty then set it
+					existingNewModule.SetValue(ModuleAttribute, newModule.GetValue(ModuleAttribute));
+				}
+			}
+		}
+
+
+		/// <summary>
+		/// handles the correct addition of Modules to the Modulelist of the new Part
+		/// </summary>
+		/// <param name="partname"></param>
+		/// <param name="newModuleName"></param>
+		/// <param name="newModule"></param>
+		private void addNewModule(string partname, string newModuleName, ConfigNode newModule)
+		{
+			switch (newModule.GetValue(newModule.values.DistinctNames()[0]))
+			{
+				//case Constants.modStockDecouple:
+				//    {
+				//        break;
+				//    }
+				case Constants.modStockAnchdec:
+					{
+						//Decoupler: Change node name
+						string decouplename = newModule.GetValue("explosiveNodeID") + partname + _partNumber;
+						newModule.SetValue("explosiveNodeID", decouplename);
+						break;
+					}
+				case Constants.modStockDocking:
+					{
+						//Docking port: Change node name if any TODO: FIX This
+						if (newModule.HasValue("referenceAttachNode"))
+						{
+							string dockname = newModule.GetValue("referenceAttachNode") + partname + _partNumber;
+							newModule.SetValue("referenceAttachNode", dockname);
+						}
+						break;
+					}
+				case Constants.modStockJettison:
+					{
+						//Fairing/Jetisson, change node name
+						string jetissonname = newModule.GetValue("bottomNodeName") + partname + _partNumber;
+						newModule.SetValue("bottomNodeName", jetissonname);
+						break;
+					}
+			}
+			_modulelist.Add(newModule);
+#if (DEBUG)
+			Debug.Log(string.Format("{0}..{1}{2}", Constants.logPrefix, Constants.logModAdd, newModuleName));
+#endif
 		}
 
 
@@ -824,7 +932,9 @@ namespace UbioWeldingLtd
 							//        break;
 							//    }
 							case Constants.modStockGear:            //Don't add (.21)
+#if (DEBUG)
 								Debug.Log(string.Format("{0}..{1}{2}", Constants.logPrefix, Constants.logModIgnore, newModuleName));
+#endif
 								exist = true;
 								break;
 							case Constants.modStockReacWheel:       //Add reaction wheel force
@@ -836,7 +946,9 @@ namespace UbioWeldingLtd
 								existingNewModule.SetValue("YawTorque", yaw.ToString());
 								existingNewModule.SetValue("RollTorque", roll.ToString());
 								existingNewModule.GetNode(Constants.weldResNode).SetValue("rate", wheelrate.ToString());
+#if (DEBUG)
 								Debug.Log(string.Format("{0}..{1}{2}", Constants.logPrefix, Constants.logModMerge, newModuleName));
+#endif
 								exist = true;
 								break;
 							case Constants.modStockCommand:        // Add Crew and Electricity ressources //TODO: Manage all used ressources
@@ -854,7 +966,9 @@ namespace UbioWeldingLtd
 										existingNewModule.AddNode(newModule.GetNode(Constants.weldResNode));
 									}
 								}
+#if(DEBUG)
 								Debug.Log(string.Format("{0}..{1}{2}", Constants.logPrefix, Constants.logModMerge, newModuleName));
+#endif
 								exist = true;
 								break;
 							case Constants.modStockGen:            // Add Generator Values //TODO: Manage output ressource name.
@@ -862,24 +976,32 @@ namespace UbioWeldingLtd
 								float genrate = float.Parse(newModule.GetNode(Constants.weldOutResNode).GetValue("rate")) + float.Parse(existingNewModule.GetNode(Constants.weldOutResNode).GetValue("rate"));
 								existingNewModule.SetValue("isAlwaysActive", active.ToString());
 								existingNewModule.GetNode(Constants.weldOutResNode).SetValue("rate", genrate.ToString());
+#if(DEBUG)
 								Debug.Log(string.Format("{0}..{1}{2}", Constants.logPrefix, Constants.logModMerge, newModuleName));
+#endif
 								exist = true;
 								break;
 							case Constants.modStockAltern:         //add the alternator value
 								float altrate = float.Parse(newModule.GetNode(Constants.weldResNode).GetValue("rate")) + float.Parse(existingNewModule.GetNode(Constants.weldResNode).GetValue("rate"));
 								existingNewModule.GetNode(Constants.weldResNode).SetValue("rate", altrate.ToString());
+#if(DEBUG)
 								Debug.Log(string.Format("{0}..{1}{2}", Constants.logPrefix, Constants.logModMerge, newModuleName));
+#endif
 								exist = true;
 								break;
 							case Constants.modStockGimbal:      //average the gimbal range TODO: test the gimbal
 								int gimbal = (int.Parse(newModule.GetValue("gimbalRange")) + int.Parse(existingNewModule.GetValue("gimbalRange"))) / 2;
 								existingNewModule.SetValue("gimbalRange", gimbal.ToString());
+#if(DEBUG)
 								Debug.Log(string.Format("{0}..{1}{2}", Constants.logPrefix, Constants.logModMerge, newModuleName));
+#endif
 								exist = true;
 								break;
 							case Constants.modStockSensor:     // Allow one sensor module per different sensor
 								exist = string.Equals(newModule.GetValue("sensorType"), existingNewModule.GetValue("sensorType"));
+#if(DEBUG)
 								Debug.Log(string.Format("{0}..{1}{2}", Constants.logPrefix, (exist) ? Constants.logModIgnore : Constants.logModMerge, newModuleName));
+#endif
 								break;
 							case Constants.modStockEngine:        // Average/add value and warning
 								bool exhaustDamage = bool.Parse(newModule.GetValue("exhaustDamage")) || bool.Parse(existingNewModule.GetValue("exhaustDamage"));
@@ -960,99 +1082,137 @@ namespace UbioWeldingLtd
 										existingNewModule.AddNode(newModule.GetNode(Constants.weldEngineVelCurve));
 									}
 								}
+#if (DEBUG)
 								Debug.Log(string.Format("{0}..{1}{2} !{3}", Constants.logPrefix, Constants.logModMerge, newModuleName, Constants.msgWarnModEngine));
+#endif
 								exist = true;
 								break;
 							case Constants.modStockAnimHeat:
 								exist = string.Equals(existingNewModule.GetValue("ThermalAnim"), newModule.GetValue("ThermalAnim"));
+#if (DEBUG)
 								Debug.Log(string.Format("{0}..{1}{2}", Constants.logPrefix, (exist) ? Constants.logModIgnore : Constants.logModMerge, newModuleName));
+#endif
 								break;
 							case Constants.modStockAnimGen:        // Warning for Multiple Animate Generic
 								exist = string.Equals(existingNewModule.GetValue("animationName"), newModule.GetValue("animationName"));
 								if (exist)
 								{
+#if (DEBUG)
 									Debug.LogWarning(string.Format("{0}{1}.. !{2}", Constants.logWarning, Constants.logPrefix, Constants.msgWarnModAnimGen));
+#endif
 									ret = WeldingReturn.MultipleAnimGen;
 								}
 								break;
 							case Constants.modStockInternal:   // Warning for multiple interal and ignore
+#if (DEBUG)
 								Debug.LogWarning(string.Format("{0}{1}..{2}{3} !{4}", Constants.logWarning, Constants.logPrefix, Constants.logModIgnore, newModuleName, Constants.msgWarnModInternal));
+#endif
 								ret = WeldingReturn.MultipleInternal;
 								exist = true;
 								break;
 							case Constants.modStockSeat:       // Warning for Multiple seats //TODO: Test
+#if (DEBUG)
 								Debug.LogWarning(string.Format("{0}{1}..{2}{3} !{4}", Constants.logWarning, Constants.logPrefix, Constants.logModIgnore, newModuleName, Constants.msgWarnModSeat));
+#endif
 								ret = WeldingReturn.MultipleSeats;
 								exist = true;
 								break;
 							case Constants.modStockSolarPan:       // Warning for Multiple Deployable Solar Panel //TODO: Test
+#if (DEBUG)
 								Debug.LogWarning(string.Format("{0}{1}..{2}{3} !{4}", Constants.logWarning, Constants.logPrefix, Constants.logModIgnore, newModuleName, Constants.msgWarnModSolPan));
+#endif
 								ret = WeldingReturn.MultipleSolarPan;
 								exist = true;
 								break;
 							case Constants.modStockJettison:       // Warning for Multiple Jetison //Only one is working fairing is working.
+#if (DEBUG)
 								Debug.LogWarning(string.Format("{0}{1}.. !{2}", Constants.logWarning, Constants.logPrefix, Constants.msgWarnModJetttison));
+#endif
 								ret = WeldingReturn.MultipleJettison;
 								exist = false;
 								break;
 							case Constants.modStockFxAnimThro:       // Warning for Multiple FX animate. // Only the first one is working, the other are ignore
+#if (DEBUG)
 								Debug.LogWarning(string.Format("{0}{1}.. !{2}", Constants.logWarning, Constants.logPrefix, Constants.msgWarnModFxAnimTh));
+#endif
 								ret = WeldingReturn.MultipleFXAnimateThrottle;
 								exist = false;
 								break;
 							case Constants.modStockIntake:        // Warning for Multiple Intake //TODO: Test
+#if (DEBUG)
 								Debug.LogWarning(string.Format("{0}{1}.. !{2}", Constants.logWarning, Constants.logPrefix, Constants.msgWarnModIntake));
+#endif
 								ret = WeldingReturn.MultipleIntake;
 								exist = false;
 								break;
 							case Constants.modStockDecouple:
 							case Constants.modStockAnchdec:        //Warning for Multiple Decoupler, change the node //TODO: Test
+#if (DEBUG)
 								Debug.LogWarning(string.Format("{0}{1}.. !{2}", Constants.logWarning, Constants.logPrefix, Constants.msgWarnModDecouple));
+#endif
 								ret = WeldingReturn.MultipleDecouple;
 								exist = false;
 								break;
 							case Constants.modStockDocking:        //Warning for Multiple Dockingport
+#if (DEBUG)
 								Debug.LogWarning(string.Format("{0}{1}.. !{2}", Constants.logWarning, Constants.logPrefix, Constants.msgWarnModDocking));
+#endif
 								ret = WeldingReturn.MultipleDocking;
 								exist = false;
 								break;
 							case Constants.modStockRCS:        //Warning for Multiple RCS
+#if (DEBUG)
 								Debug.LogWarning(string.Format("{0}{1}..{2}{3} !{4}", Constants.logWarning, Constants.logPrefix, Constants.logModIgnore, newModuleName, Constants.msgWarnModRcs));
+#endif
 								//ret = WeldingReturn.MultipleRcs;
 								exist = true;
 								break;
 							case Constants.modStockParachutes:        //Warning for Multiple Parachutes //TODO: Test
+#if (DEBUG)
 								Debug.LogWarning(string.Format("{0}{1}.. !{2}", Constants.logWarning, Constants.logPrefix, Constants.msgWarnModParachute));
+#endif
 								ret = WeldingReturn.MultipleParachutes;
 								exist = false;
 								break;
 							case Constants.modStockLight:        //Warning for Multiple Light //TODO: Test
+#if (DEBUG)
 								Debug.LogWarning(string.Format("{0}{1}.. !{2}", Constants.logWarning, Constants.logPrefix, Constants.msgWarnModLight));
+#endif
 								ret = WeldingReturn.MultipleLight;
 								exist = false;
 								break;
 							case Constants.modStockRetLadder:        //Warning for Multiple Retractable ladder //TODO: Test
+#if (DEBUG)
 								Debug.LogWarning(string.Format("{0}{1}.. !{2}", Constants.logWarning, Constants.logPrefix, Constants.msgWarnModRetLadder));
+#endif
 								ret = WeldingReturn.MultipleRetLadder;
 								exist = false;
 								break;
 							case Constants.modStockWheel:        //Warning for Multiple Wheels //TODO: Test
+#if (DEBUG)
 								Debug.LogWarning(string.Format("{0}{1}.. !{2}", Constants.logWarning, Constants.logPrefix, Constants.msgWarnModWheel));
+#endif
 								ret = WeldingReturn.MultipleWheel;
 								exist = false;
 								break;
 							case Constants.modStockFxLookAt:        //Warning for Multiple FxLookAt Constraint (wome with wheels) //TODO: Test
+#if (DEBUG)
 								Debug.LogWarning(string.Format("{0}{1}.. !{2}", Constants.logWarning, Constants.logPrefix, Constants.msgWarnModFxLookAt));
+#endif
 								ret = WeldingReturn.MultipleFxLookAt;
 								exist = false;
 								break;
 							case Constants.modStockFxPos:        //Warning for Multiple Constraint Position (wome with wheels) //TODO: Test
+#if (DEBUG)
 								Debug.LogWarning(string.Format("{0}{1}.. !{2}", Constants.logWarning, Constants.logPrefix, Constants.msgWarnModFxPos));
+#endif
 								ret = WeldingReturn.MultipleFxPos;
 								exist = false;
 								break;
 							case Constants.modStockLaunchClamp:        //Warning for Multiple Launching Clamp (I don't even why would it be needed
+#if (DEBUG)
 								Debug.LogWarning(string.Format("{0}{1}.. !{2}", Constants.logWarning, Constants.logPrefix, Constants.msgWarnModLaunClamp));
+#endif
 								ret = WeldingReturn.MultipleLaunchClamp;
 								exist = false;
 								break;
@@ -1060,7 +1220,9 @@ namespace UbioWeldingLtd
 								exist = string.Equals(existingNewModule.GetValue("experimentID"), newModule.GetValue("experimentID"));
 								if (exist)
 								{
+#if (DEBUG)
 									Debug.LogWarning(string.Format("{0}{1}.. !{2}", Constants.logWarning, Constants.logPrefix, Constants.msgWarnModScieExp));
+#endif
 									ret = WeldingReturn.MultipleScienceExp;
 								}
 								break;
@@ -1073,15 +1235,18 @@ namespace UbioWeldingLtd
 								existingNewModule.SetValue("packetInterval", packetInterval.ToString());
 								existingNewModule.SetValue("packetSize", packetSize.ToString());
 								existingNewModule.SetValue("packetResourceCost", packetResourceCost.ToString());
-
+#if (DEBUG)
 								Debug.Log(string.Format("{0}..{1}{2}", Constants.logPrefix, Constants.logModMerge, newModuleName));
+#endif
 								exist = true;
 								break;
 							case Constants.modStockLandingLegs:        // Waring Multiple same landing legs
 								exist = string.Equals(existingNewModule.GetValue("animationName"), newModule.GetValue("animationName"));
 								if (exist)
 								{
+#if (DEBUG)
 									Debug.LogWarning(string.Format("{0}{1}.. !{2}", Constants.logWarning, Constants.logPrefix, Constants.msgWarnModLandLegs));
+#endif
 									ret = WeldingReturn.MultipleLandingLegs;
 								}
 								break;
@@ -1092,14 +1257,17 @@ namespace UbioWeldingLtd
 
 								existingNewModule.SetValue("evaOnlyStorage", evaOnlyStorage.ToString());
 								existingNewModule.SetValue("storageRange", storageRange.ToString());
-
+#if (DEBUG)
 								Debug.Log(string.Format("{0}..{1}{2}", Constants.logPrefix, Constants.logModMerge, newModuleName));
+#endif
 								exist = true;
 								break;
 							default:
 								{
 									// New update module or mods! not managed
+#if (DEBUG)
 									Debug.LogWarning(string.Format("{0}{1}.. !{2}", Constants.logWarning, Constants.logPrefix, Constants.msgWarnModUnknown));
+#endif
 									ret = WeldingReturn.ModuleUnknown;
 									exist = false;
 									break;
@@ -1138,7 +1306,9 @@ namespace UbioWeldingLtd
 							}
 					}
 					_modulelist.Add(newModule);
+#if (DEBUG)
 					Debug.Log(string.Format("{0}..{1}{2}", Constants.logPrefix, Constants.logModAdd, newModuleName));
+#endif
 				} //if (!exist)
 			} //foreach (ConfigNode mod in modules)
 			return ret;
@@ -1190,6 +1360,10 @@ namespace UbioWeldingLtd
 				orientation.x = (int)Mathf.RoundToInt(node.orientation.x);
 				orientation.y = (int)Mathf.RoundToInt(node.orientation.y);
 				orientation.z = (int)Mathf.RoundToInt(node.orientation.z);
+				if (orientation == Vector3.zero)
+				{
+					orientation = Vector3.up;
+				}
 				partconfig.AddValue(string.Format("node_stack_{0}", node.id), string.Format("{0},{1},{2}", ConfigNode.WriteVector(node.position), ConfigNode.WriteVector(orientation), node.size));
 			}
 			//add surface attach node

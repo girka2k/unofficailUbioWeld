@@ -65,6 +65,7 @@ namespace UbioWeldingLtd
 		public const string settingCompleteIconFilePath = @"\PluginData\UbioWeldingLtd\icon.png";
         public static readonly string settingRuntimeDirectory = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().GetName().CodeBase).Replace(@"file:\","");
         public const string settingSystemDirectorySlash = @"\";
+        public const string unterline = "_";
 
 		//Messages
 		public const string msgSuccess = "Welding is a success";
@@ -164,7 +165,30 @@ namespace UbioWeldingLtd
 		public const string rdNodeByPass = "advRocketry"; // bypass to make welding show up early
 		public const string rdNodeSandboxWeld = "sandboxWeld"; //For sandbox
 
-		public static string[] averagedModuleAttributes = { "ReactorTemp", "upgradedReactorTemp" };
+        public static string[] averagedModuleAttributes =
+        {
+            "FNAntimatterReactor_ReactorTemp",
+            "FNAntimatterReactor_upgradedReactorTemp",
+            "FNAntimatterReactor_radius",
+            "ModuleScienceExperiment_interactionRange",
+            "ModuleScienceExperiment_xmitDataScalar",
+            "ModuleScienceLab_interactionRange",
+            "ModuleScienceLab_dataTransmissionBoost",
+            "ModuleScienceContainer_storageRange",
+            "ModuleCommand_minimumCrew"
+        };
+
+        public static string[] unchangedModuleAttributes =
+        {
+            "ModuleScienceLab_crewsRequired ",
+            "ModuleScienceLab_containerModuleIndex",
+            "ModuleTestSubject_environments"
+        };
+
+        public static string[] breakingModuleAttributes = 
+        {
+            "ModuleScienceExperiment_experimentID"
+        };
 	}
 
 }

@@ -20,3 +20,9 @@ C:\kerbal\Kerbal Space Program\GameData\UbioWeldingLtd\PluginData\UbioWeldingLtd
 \\girka-hp\C$\Users\girka.NIKAMED\YandexDisk\!KSP\Dev\Projects\unofficailUbioWeld\UbioWeldingLtd\bin\Debug\System.dll
 \\girka-hp\C$\Users\girka.NIKAMED\YandexDisk\!KSP\Dev\Projects\unofficailUbioWeld\UbioWeldingLtd\bin\Debug\System.Xml.dll
 \\girka-hp\C$\Users\girka.NIKAMED\YandexDisk\!KSP\Dev\Projects\unofficailUbioWeld\UbioWeldingLtd\obj\Debug\UbioWeldingLtd.dll
+D:\Games\KSP Source Projects\unofficailUbioWeld\UbioWeldingLtd\bin\Debug\UbioWeldingLtd.dll
+D:\Games\KSP Source Projects\unofficailUbioWeld\UbioWeldingLtd\bin\Debug\UbioWeldingLtd.pdb
+D:\Games\KSP Source Projects\unofficailUbioWeld\UbioWeldingLtd\bin\Debug\Assembly-CSharp-firstpass.dll
+D:\Games\KSP Source Projects\unofficailUbioWeld\UbioWeldingLtd\obj\Debug\UbioWeldingLtd.csprojResolveAssemblyReference.cache
+D:\Games\KSP Source Projects\unofficailUbioWeld\UbioWeldingLtd\obj\Debug\UbioWeldingLtd.dll
+D:\Games\KSP Source Projects\unofficailUbioWeld\UbioWeldingLtd\obj\Debug\UbioWeldingLtd.pdb

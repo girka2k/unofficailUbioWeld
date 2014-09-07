@@ -1,11 +1,6 @@
-﻿using System;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Text.RegularExpressions;
+﻿using System.IO;
 using System.Collections.Generic;
 using UnityEngine;
-using KSP.IO;
 
 namespace UbioWeldingLtd
 {
@@ -22,6 +17,7 @@ namespace UbioWeldingLtd
 			savedWindow,
 			overwriteDial
 		}
+		public static UbioZurWeldingLtd instance { get; private set; }
 
 		private Rect _editorButton;
 		private Rect _editorErrorDial;
@@ -38,9 +34,15 @@ namespace UbioWeldingLtd
 		private Vector2 _scrollMod = Vector2.zero;
 
 		private PluginConfiguration _config;
-		private Texture2D _iconTexture;
-		private ApplicationLauncherButton _stockToolbarButton;
 		private bool _guiVisible = false;
+		
+		/// <summary>
+		/// access to the config of the whole tool
+		/// </summary>
+		public PluginConfiguration config
+		{
+			get { return _config; }
+		}
 
 
 		/*
@@ -48,21 +50,11 @@ namespace UbioWeldingLtd
 		 */
 		public void Awake()
 		{
+			instance = this;
 			initConfig();
-
 			_state = DisplayState.none;
-
 			RenderingManager.AddToPostDrawQueue(0, OnDraw);
-
-			if (_config.useStockToolbar)
-			{
-				if (_iconTexture == null)
-				{
-					_iconTexture = new Texture2D(38, 38, TextureFormat.RGBA32, false);
-					_iconTexture.LoadImage(System.IO.File.ReadAllBytes(System.IO.Path.Combine(System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), Constants.settingIconFileName)));
-				}
-			}
-			else
+			if (!_config.useStockToolbar)
 			{
 				_editorButton = new Rect(Screen.width - _config.editorButtonX, _config.editorButtonY, Constants.guiWeldButWidth, Constants.guiWeldButHeight);
 			}
@@ -71,13 +63,17 @@ namespace UbioWeldingLtd
 			_editorInfoWindow = new Rect(Screen.width / 2 - Constants.guiInfoWindowX, Screen.height / 2 - Constants.guiInfoWindowY, Constants.guiInfoWindowW, Constants.guiInfoWindowH);
 			_editorOverwriteDial = new Rect(Screen.width / 2 - Constants.guiDialogX, Screen.height / 2 - Constants.guiDialogY, Constants.guiDialogW, Constants.guiDialogH);
 			_editorSavedDial = new Rect(Screen.width / 2 - Constants.guiDialogX, Screen.height / 2 - Constants.guiDialogY, Constants.guiDialogW, Constants.guiDialogH);
+
+			_catNames = WeldingHelpers.initPartCategories(_catNames);
+			_catListStyle = WeldingHelpers.initGuiStyle(_catListStyle);
+			_catDropdown = WeldingHelpers.initDropDown(_catNames, _catListStyle, _catDropdown);
 		}
 
 
         /// <summary>
         /// Welds the whole active craft in the scene in case the stocktoolbar is used
         /// </summary>
-		private void stockToolbarButtonUsed()
+		public void stockToolbarButtonUsed()
 		{
 			if (!EditorLogic.softLock)
 			{
@@ -86,7 +82,7 @@ namespace UbioWeldingLtd
                     weldPart(EditorLogic.startPod);
                 }
 			}
-			_stockToolbarButton.SetFalse();
+			//_stockToolbarButton.SetFalse();
 		}
 
 
@@ -123,7 +119,10 @@ namespace UbioWeldingLtd
 			{
 				if (_config.useStockToolbar)
 				{
-					_stockToolbarButton = ApplicationLauncher.Instance.AddModApplication(stockToolbarButtonUsed, null, null, null, null, null, ApplicationLauncher.AppScenes.VAB | ApplicationLauncher.AppScenes.SPH, _iconTexture);
+					if (EditorToolbar.instance != null)
+					{
+						EditorToolbar.instance.initToolbar();
+					}
 				}
 				_guiVisible = true;
 			}
@@ -134,9 +133,6 @@ namespace UbioWeldingLtd
 		 */
 		public void Start()
 		{
-            _catNames = WeldingHelpers.initPartCategories(_catNames);
-            _catListStyle = WeldingHelpers.initGuiStyle(_catListStyle);
-            _catDropdown = WeldingHelpers.initDropDown(_catNames, _catListStyle, _catDropdown);
             initGUI();
 		}
 
@@ -145,14 +141,14 @@ namespace UbioWeldingLtd
         /// called once the item gets destroyed
         /// makes clear that the button is removed from the toolbar
         /// </summary>
-        public void OnDestroy()
-        {
-            if (_stockToolbarButton != null)
-            {
-                ApplicationLauncher.Instance.RemoveModApplication(_stockToolbarButton);
-                _stockToolbarButton = null;
-            }
-        }
+		//public void OnDestroy()
+		//{
+		//	if (_stockToolbarButton != null)
+		//	{
+		//		ApplicationLauncher.Instance.RemoveModApplication(_stockToolbarButton);
+		//		_stockToolbarButton = null;
+		//	}
+		//}
 
 		/*
 		 * To draw the UI
@@ -192,7 +188,7 @@ namespace UbioWeldingLtd
 		} //private void OnDraw()
 
 
-		private void weldPart(Part partToWeld )
+		private void weldPart(Part partToWeld)
 		{
 			//Lock editor
 			EditorLogic.fetch.Lock(true, true, true, "UBILOCK9213");
@@ -207,7 +203,7 @@ namespace UbioWeldingLtd
 			_welder = new Welder();
 
             WeldingReturn ret = _welder.weldThisPart(partToWeld);
-			if (0 > ret)
+			if (ret < 0)
 			{
 #if (DEBUG)
 				Debug.Log(string.Format("{0}{1}", Constants.logPrefix, Constants.logEndWeld));
@@ -221,12 +217,12 @@ namespace UbioWeldingLtd
 			}
 
             Part[] children = partToWeld.FindChildParts<Part>(true);
-			if (null != children)
+			if (children != null)
 			{
 				foreach (Part child in children)
 				{
 					ret = _welder.weldThisPart(child);
-					if (0 > ret)
+					if (ret< 0)
 					{
 #if (DEBUG)
 						Debug.Log(string.Format("{0}{1}", Constants.logPrefix, Constants.logEndWeld));

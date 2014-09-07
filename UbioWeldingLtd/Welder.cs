@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -395,19 +394,15 @@ namespace UbioWeldingLtd
 			WeldingReturn ret = WeldingReturn.Success;
 			string partname = (string)newpart.partInfo.partPrefab.name.Clone();
 			removecClone(ref partname);
-			//KSP Squad specific hardcode :@
-			//            if (string.Equals(partname, "fuelTank.long") || string.Equals(partname, "science.module"))
-			//            {
-			//                partname = partname.Replace('.', '_'); //Fixed the name change for the fuelTank_long (stored as fuelTank.long), science_module (stored as science.module)
-			//            }
+
 			Debug.Log(string.Format("{0}{1}{2}", Constants.logPrefix, Constants.logWeldingPart, partname));
 #if (DEBUG)
 			Debug.Log(string.Format("{0}..part rescaleFactor {1:F}", Constants.logPrefix, newpart.rescaleFactor));
 			Debug.Log(string.Format("{0}..part scaleFactor {1:F}", Constants.logPrefix, newpart.scaleFactor));
 #endif
-
 			//--- Find all the config file with the name
 			List<UrlDir.UrlConfig> matchingPartConfigs = new List<UrlDir.UrlConfig>();
+			List<Vector3> partScalings = new List<Vector3>();
 			foreach (UrlDir.UrlConfig config in GameDatabase.Instance.GetConfigs(Constants.weldPartNode))
 			{
 				string newconfigname = config.name.Replace('_', '.');
@@ -418,12 +413,16 @@ namespace UbioWeldingLtd
 				if (System.String.Equals(partname, newconfigname, System.StringComparison.Ordinal))
 				{
 					matchingPartConfigs.Add(config);
+					partScalings.Add(newpart.transform.GetChild(0).localScale);
+					Debug.LogError(string.Format("{0}| config found for {1} with scale of {2} or {3}", Constants.logPrefix, newconfigname, newpart.transform.localScale, newpart.transform.lossyScale));
+					//break;
 				}
 			}
+
 #if (DEBUG)
 			Debug.Log(string.Format("{0}.Found {1} config files", Constants.logPrefix, matchingPartConfigs.Count));
 #endif
-			if (matchingPartConfigs.Count >= 0)
+			if (matchingPartConfigs.Count < 1)
 			{
 				//Missing Config File: Error
 				Debug.LogError(string.Format("{0}{1}.{2} {3}", Constants.logError, Constants.logPrefix, Constants.msgCfgMissing, partname));
@@ -693,6 +692,45 @@ namespace UbioWeldingLtd
 
 
 		/// <summary>
+		/// checks if the given Module is included in the part.
+		/// returns true when a wanted module is found.
+		/// </summary>
+		/// <param name="moduleSearchArray"></param>
+		/// <param name="moduleType"></param>
+		/// <returns></returns>
+		private bool hasModuleType(ConfigNode[] moduleSearchArray, string moduleType)
+		{
+			foreach (ConfigNode singleModule in moduleSearchArray)
+			{
+				if (moduleType.Equals(singleModule.GetValue(singleModule.values.DistinctNames()[0])))
+				{
+					return true;
+				}
+			}
+			return false;
+		}
+
+		/// <summary>
+		/// provides the wanted module from a inserted list of modules.
+		/// returns the first found module of the given type, if no module was found retursn null
+		/// </summary>
+		/// <param name="moduleSearchArray"></param>
+		/// <param name="moduleType"></param>
+		/// <returns></returns>
+		private ConfigNode getModuleOfType(ConfigNode[] moduleSearchArray, string moduleType)
+		{
+			foreach (ConfigNode singleModule in moduleSearchArray)
+			{
+				if (moduleType.Equals(singleModule.GetValue(singleModule.values.DistinctNames()[0])))
+				{
+					return singleModule;
+				}
+			}
+			return null;
+		}
+
+
+		/// <summary>
 		/// merges the modules in a almost generic way.
 		/// </summary>
 		/// <param name="partname"></param>
@@ -705,10 +743,11 @@ namespace UbioWeldingLtd
 			bool boolResult = false;
 			float floatResult = 0f;
 			bool skip = false;
+			ConfigNode newModule;
 
 			foreach (ConfigNode originalModule in originalModules)
 			{
-				ConfigNode newModule = originalModule.CreateCopy();
+				newModule = originalModule.CreateCopy();
 				newModuleName = newModule.GetValue(newModule.values.DistinctNames()[0]);
 				exist = false;
 
@@ -807,9 +846,9 @@ namespace UbioWeldingLtd
 			Debug.LogWarning(string.Format("{0}| {1} - {2} is float", Constants.logPrefix, newModuleName, ModuleAttribute));
 #endif
 			//merge float values if they are allowed
-			if (!Constants.unchangedModuleAttributes.Contains(string.Concat(newModuleName, Constants.unterline, ModuleAttribute)))
+			if (!Constants.unchangedModuleAttributes.Contains(string.Concat(newModuleName, Constants.underline, ModuleAttribute)))
 			{
-				if (Constants.averagedModuleAttributes.Contains(string.Concat(newModuleName, Constants.unterline, ModuleAttribute)))
+				if (Constants.averagedModuleAttributes.Contains(string.Concat(newModuleName, Constants.underline, ModuleAttribute)))
 				{
 					existingNewModule.SetValue(ModuleAttribute, ((float.Parse(newModule.GetValue(ModuleAttribute)) + float.Parse(existingNewModule.GetValue(ModuleAttribute))) * 0.5f).ToString());
 				}
@@ -835,7 +874,7 @@ namespace UbioWeldingLtd
 #if (DEBUG)
 			Debug.LogWarning(string.Format("{0}| {1} - {2} is string", Constants.logPrefix, newModuleName, ModuleAttribute));
 #endif
-			if (Constants.breakingModuleAttributes.Contains(string.Concat(newModuleName, Constants.unterline, ModuleAttribute)))
+			if (Constants.breakingModuleAttributes.Contains(string.Concat(newModuleName, Constants.underline, ModuleAttribute)))
 			{
 #if (DEBUG)
 				Debug.LogWarning(string.Format("{0}| {1} - {2} is of breaking category | {3}", Constants.logPrefix, newModuleName, ModuleAttribute, string.Equals(existingNewModule.GetValue(ModuleAttribute), newModule.GetValue(ModuleAttribute))));
@@ -1357,9 +1396,9 @@ namespace UbioWeldingLtd
 			{
 				//Make sure the orintation is an int
 				Vector3 orientation = Vector3.zero;
-				orientation.x = (int)Mathf.RoundToInt(node.orientation.x);
-				orientation.y = (int)Mathf.RoundToInt(node.orientation.y);
-				orientation.z = (int)Mathf.RoundToInt(node.orientation.z);
+				orientation.x = (int)Mathf.FloorToInt(node.orientation.x + 0.5f);
+				orientation.y = (int)Mathf.FloorToInt(node.orientation.y + 0.5f);
+				orientation.z = (int)Mathf.FloorToInt(node.orientation.z + 0.5f);
 				if (orientation == Vector3.zero)
 				{
 					orientation = Vector3.up;

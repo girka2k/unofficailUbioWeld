@@ -1,5 +1,4 @@
 ﻿using System.Reflection;
-using UnityEngine;
 
 namespace UbioWeldingLtd
 {
@@ -58,14 +57,10 @@ namespace UbioWeldingLtd
 		public const string settingDontProcessMasslessParts = "dontProcessMasslessParts";
 		public const string settingRunInTestMode = "runInTestMode";
 		public const string settingUseStockToolbar = "useStockToolbar";
-		public const string settingConfigFileName = "config.xml";
-		public const string settingIconFileName = "icon.png";
-		public const string settingFilePath = @"\PluginData\UbioWeldingLtd\";
+		public const string settingIconGetPath = "UbioWeldingLtd/Textures/ToolbarIcon";
 		public const string settingCompleteConfigFilePath = @"\PluginData\UbioWeldingLtd\config.xml";
-		public const string settingCompleteIconFilePath = @"\PluginData\UbioWeldingLtd\icon.png";
+		public const string underline = "_";
         public static readonly string settingRuntimeDirectory = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().GetName().CodeBase).Replace(@"file:\","");
-        public const string settingSystemDirectorySlash = @"\";
-        public const string unterline = "_";
 
 		//Messages
 		public const string msgSuccess = "Welding is a success";

@@ -558,7 +558,7 @@ namespace UbioWeldingLtd
 #endif
 					if (runInTestMode)
 					{
-						AlexTestModuleMerge(partname, cfg);
+						mergeModulesAlexTest(partname, cfg);
 					}
 					else
 					{
@@ -735,7 +735,7 @@ namespace UbioWeldingLtd
 		/// </summary>
 		/// <param name="partname"></param>
 		/// <param name="configuration"></param>
-		private void AlexTestModuleMerge(string partname, UrlDir.UrlConfig configuration)
+		private void mergeModulesAlexTest(string partname, UrlDir.UrlConfig configuration)
 		{
 			ConfigNode[] originalModules = configuration.config.GetNodes(Constants.weldModuleNode);
 			string newModuleName = "";
@@ -793,6 +793,7 @@ namespace UbioWeldingLtd
 								if (exist)
 								{
 									mergeModuleAttributes(newModuleName, /*ref exist, ref boolResult, ref floatResult,*/ newModule, existingNewModule);
+									mergeSubModules(newModule, existingNewModule);
 									exist = true;
 									break;
 								}
@@ -800,19 +801,10 @@ namespace UbioWeldingLtd
 							else
 							{
 								mergeModuleAttributes(newModuleName, /*ref exist, ref boolResult, ref floatResult,*/ newModule, existingNewModule);
+								mergeSubModules(newModule, existingNewModule);
 								exist = true;
 								break;
 							}
-
-							#region
-							//take care of submodules like
-							// RESOURCE
-							// OUTPUT_RESOURCE
-							// PROPELLANT
-							// atmosphereCurve
-							// velocityCurve
-							#endregion
-
 							//if (!skip)
 							//{
 							//	exist = true;
@@ -824,12 +816,36 @@ namespace UbioWeldingLtd
 				}//foreach (ConfigNode existingNewModule in _modulelist)
 				if (!exist)
 				{
-					addNewModule(partname, newModuleName, newModule);
+					if (!WeldingHelpers.isArrayContaing(newModuleName, Constants.modulesToIgnore))
+					{
+						addNewModule(partname, newModuleName, newModule);
+					}
 				} //if (!exist)
 			} //foreach (ConfigNode mod in modules)
 		}
 
 
+		/// <summary>
+		/// manages the merging of submodules inside the module
+		/// </summary>
+		/// <param name="newModule"></param>
+		/// <param name="existingNewModule"></param>
+		private static void mergeSubModules(ConfigNode newModule, ConfigNode existingNewModule)
+		{
+			Debug.LogError(string.Format("{0}| Merging SubModules Start", Constants.logPrefix));
+			foreach (string subModule in Constants.subModules)
+			{
+				if (existingNewModule.HasNode(subModule))
+				{
+					Debug.LogError(string.Format("{0}| SubModules found", Constants.logPrefix));
+					ConfigNode existingNewSubModule = existingNewModule.GetNode(subModule);
+					ConfigNode newSubModule = newModule.GetNode(subModule);
+					string newSubmoduleName = existingNewSubModule.GetValue(existingNewSubModule.values.DistinctNames()[0]);
+					mergeModuleAttributes(newSubmoduleName, /*ref exist, ref boolResult, ref floatResult,*/ newSubModule, existingNewSubModule);
+				}
+			}
+			Debug.LogError(string.Format("{0}| Merging SubModules End", Constants.logPrefix));
+		}
 
 
 		/// <summary>

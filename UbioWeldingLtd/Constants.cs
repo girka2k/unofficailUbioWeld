@@ -105,8 +105,8 @@ namespace UbioWeldingLtd
 		public const string weldDefaultDesc = "Warranty void during re-entry.";
 		public const string weldPartNode = "PART";
 		public const string weldModelNode = "MODEL";
-		public const string weldResNode = "RESOURCE";
 		public const string weldModuleNode = "MODULE";
+		public const string weldResNode = "RESOURCE";
 		public const string weldOutResNode = "OUTPUT_RESOURCE";
 		public const string weldEngineProp = "PROPELLANT";
 		public const string weldEngineAtmCurve = "atmosphereCurve";
@@ -161,6 +161,19 @@ namespace UbioWeldingLtd
 		public const string rdNodeExpMotors = "experimentalsMotors"; //Experimental Motors
 		public const string rdNodeByPass = "advRocketry"; // bypass to make welding show up early
 		public const string rdNodeSandboxWeld = "sandboxWeld"; //For sandbox
+
+		public static string[] subModules =
+		{
+			"RESOURCE",
+			"OUTPUT_RESOURCE",
+			"PROPELLANT"
+		};
+
+		public static string[] modulesToIgnore =
+		{
+			"TweakScale"
+		};
+
 
         public static string[] averagedModuleAttributes =
         {

@@ -740,9 +740,9 @@ namespace UbioWeldingLtd
 			ConfigNode[] originalModules = configuration.config.GetNodes(Constants.weldModuleNode);
 			string newModuleName = "";
 			bool exist = false;
-			bool boolResult = false;
-			float floatResult = 0f;
-			bool skip = false;
+			//bool boolResult = false;
+			//float floatResult = 0f;
+			//bool skip = false;
 			ConfigNode newModule;
 
 			foreach (ConfigNode originalModule in originalModules)
@@ -753,11 +753,7 @@ namespace UbioWeldingLtd
 
 				foreach (ConfigNode existingNewModule in _modulelist)
 				{
-					if (!newModuleName.Equals(existingNewModule.GetValue(existingNewModule.values.DistinctNames()[0])))
-					{
-						exist = false;
-					}
-					else
+					if (newModuleName.Equals(existingNewModule.GetValue(existingNewModule.values.DistinctNames()[0])))
 					{
 #if (DEBUG)
 						Debug.LogError(string.Format("{0}.. {1} Module already exists!!!", Constants.logPrefix, existingNewModule.GetValue(existingNewModule.values.DistinctNames()[0])));
@@ -770,50 +766,116 @@ namespace UbioWeldingLtd
 						}
 						else
 						{
-							skip = false;
-							foreach (string ModuleAttribute in existingNewModule.values.DistinctNames())
+							//skip = false;
+							string[] breakingAttributes = new string[newModule.values.DistinctNames().Count()];
+							for (int i = 0; i < newModule.values.DistinctNames().Count(); i++)
 							{
-								if (skip)
+								breakingAttributes[i] = string.Concat(newModuleName,Constants.underline, newModule.values.DistinctNames()[i]);
+							}
+
+							breakingAttributes = WeldingHelpers.getSharedArrayValues(breakingAttributes, Constants.breakingModuleAttributes);
+							Debug.LogError(string.Format("{0}- BreakingAttributes found = {1} ", Constants.logPrefix, breakingAttributes.Length));
+
+							if (breakingAttributes.Length > 0)
+							{
+								foreach (string s in breakingAttributes)
 								{
+									string breakingAttribute = s.Replace(string.Concat(newModuleName, Constants.underline), "");
+									var existingValue = existingNewModule.GetValue(breakingAttribute);
+									var newValue = newModule.GetValue(breakingAttribute);
+									Debug.LogError(string.Format("{0}- BreakingAttributes found | current one is {1} | ExistingValue = {2} - NewValue = {3}", Constants.logPrefix, breakingAttribute, existingValue, newValue));
+									exist = Equals(existingValue, newValue);
+									if (!exist)
+									{
+										break;
+									}
+								}
+								if (exist)
+								{
+									mergeModuleAttributes(newModuleName, /*ref exist, ref boolResult, ref floatResult,*/ newModule, existingNewModule);
+									exist = true;
 									break;
 								}
-								else
-								{
-									boolResult = false;
-									floatResult = 0f;
-									if (bool.TryParse(existingNewModule.GetValue(ModuleAttribute), out boolResult))
-									{
-										mergeModuleBoolValues(newModuleName, newModule, existingNewModule, ModuleAttribute);
-									}
-									else
-									{
-										if (float.TryParse(existingNewModule.GetValue(ModuleAttribute), out floatResult))
-										{
-											mergeModuleFloatValues(newModuleName, newModule, existingNewModule, ModuleAttribute);
-										}
-										else
-										{
-											mergeModuleStringValues(newModuleName, ref exist, ref skip, newModule, existingNewModule, ModuleAttribute);
-										}
-									}
-								}
-#if (DEBUG)
-								//Debug.LogError(string.Format("{0}- Alex Modulemerger - {1} | {2} = {3}", Constants.logPrefix, existingNewModule.GetValue(existingNewModule.values.DistinctNames()[0]), ModuleAttribute, existingNewModule.GetValue(ModuleAttribute)));
-#endif
 							}
-							if (!skip)
+							else
 							{
+								mergeModuleAttributes(newModuleName, /*ref exist, ref boolResult, ref floatResult,*/ newModule, existingNewModule);
 								exist = true;
 								break;
 							}
+
+							#region
+							//take care of submodules like
+							// RESOURCE
+							// OUTPUT_RESOURCE
+							// PROPELLANT
+							// atmosphereCurve
+							// velocityCurve
+							#endregion
+
+							//if (!skip)
+							//{
+							//	exist = true;
+							//	break;
+							//}
 						}
 					}
+					Debug.LogError(string.Format("{0}- Module ready to add = {1}", Constants.logPrefix, exist));
 				}//foreach (ConfigNode existingNewModule in _modulelist)
 				if (!exist)
 				{
 					addNewModule(partname, newModuleName, newModule);
 				} //if (!exist)
 			} //foreach (ConfigNode mod in modules)
+		}
+
+
+
+
+		/// <summary>
+		/// managed the merging of the attributes of a module
+		/// </summary>
+		/// <param name="newModuleName"></param>
+		/// <param name="exist"></param>
+		/// <param name="boolResult"></param>
+		/// <param name="floatResult"></param>
+		/// <param name="newModule"></param>
+		/// <param name="existingNewModule"></param>
+		private static void mergeModuleAttributes(string newModuleName, /*ref bool exist, ref bool boolResult, ref float floatResult,*/ ConfigNode newModule, ConfigNode existingNewModule)
+		{
+			bool boolResult;
+			float floatResult;
+
+			foreach (string ModuleAttribute in existingNewModule.values.DistinctNames())
+			{
+				//if (skip)
+				//{
+				//	break;
+				//}
+				//else
+				//{
+				boolResult = false;
+				floatResult = 0f;
+				if (bool.TryParse(existingNewModule.GetValue(ModuleAttribute), out boolResult))
+				{
+					mergeModuleBoolValues(newModuleName, newModule, existingNewModule, ModuleAttribute);
+				}
+				else
+				{
+					if (float.TryParse(existingNewModule.GetValue(ModuleAttribute), out floatResult))
+					{
+						mergeModuleFloatValues(newModuleName, newModule, existingNewModule, ModuleAttribute);
+					}
+					else
+					{
+						mergeModuleStringValues(newModuleName, /*ref exist, ref skip,*/ newModule, existingNewModule, ModuleAttribute);
+					}
+				}
+				//}
+#if (DEBUG)
+				//Debug.LogError(string.Format("{0}- Alex Modulemerger - {1} | {2} = {3}", Constants.logPrefix, existingNewModule.GetValue(existingNewModule.values.DistinctNames()[0]), ModuleAttribute, existingNewModule.GetValue(ModuleAttribute)));
+#endif
+			}
 		}
 
 
@@ -830,6 +892,7 @@ namespace UbioWeldingLtd
 			Debug.LogWarning(string.Format("{0}| {1} - {2} is bool", Constants.logPrefix, newModuleName, ModuleAttribute));
 #endif
 			existingNewModule.SetValue(ModuleAttribute, (bool.Parse(newModule.GetValue(ModuleAttribute)) || bool.Parse(existingNewModule.GetValue(ModuleAttribute))).ToString());
+			Debug.LogWarning(string.Format("{0}| {1} - {2} is merged with value {3}", Constants.logPrefix, newModuleName, ModuleAttribute, bool.Parse(existingNewModule.GetValue(ModuleAttribute))));
 		}
 
 
@@ -846,17 +909,21 @@ namespace UbioWeldingLtd
 			Debug.LogWarning(string.Format("{0}| {1} - {2} is float", Constants.logPrefix, newModuleName, ModuleAttribute));
 #endif
 			//merge float values if they are allowed
-			if (!Constants.unchangedModuleAttributes.Contains(string.Concat(newModuleName, Constants.underline, ModuleAttribute)))
+			if (!WeldingHelpers.isArrayContaing(string.Concat(newModuleName, Constants.underline, ModuleAttribute), Constants.unchangedModuleAttributes))
 			{
-				if (Constants.averagedModuleAttributes.Contains(string.Concat(newModuleName, Constants.underline, ModuleAttribute)))
+				float newValue = float.TryParse(newModule.GetValue(ModuleAttribute),out newValue)? float.Parse(newModule.GetValue(ModuleAttribute)):0;
+				float existingValue = float.TryParse(existingNewModule.GetValue(ModuleAttribute), out existingValue) ? float.Parse(existingNewModule.GetValue(ModuleAttribute)) : 0;
+
+				if (WeldingHelpers.isArrayContaing(string.Concat(newModuleName, Constants.underline, ModuleAttribute), Constants.averagedModuleAttributes))
 				{
-					existingNewModule.SetValue(ModuleAttribute, ((float.Parse(newModule.GetValue(ModuleAttribute)) + float.Parse(existingNewModule.GetValue(ModuleAttribute))) * 0.5f).ToString());
+					existingNewModule.SetValue(ModuleAttribute, ((newValue + existingValue) * 0.5f).ToString());
 				}
 				else
 				{
-					existingNewModule.SetValue(ModuleAttribute, ((float.Parse(newModule.GetValue(ModuleAttribute)) + float.Parse(existingNewModule.GetValue(ModuleAttribute)))).ToString());
+					existingNewModule.SetValue(ModuleAttribute, (newValue + existingValue).ToString());
 				}
 			}
+			Debug.LogWarning(string.Format("{0}| {1} - {2} is merged with value {3}", Constants.logPrefix, newModuleName, ModuleAttribute, float.Parse(existingNewModule.GetValue(ModuleAttribute))));
 		}
 
 
@@ -869,30 +936,36 @@ namespace UbioWeldingLtd
 		/// <param name="newModule"></param>
 		/// <param name="existingNewModule"></param>
 		/// <param name="ModuleAttribute"></param>
-		private static void mergeModuleStringValues(string newModuleName, ref bool exist, ref bool skip, ConfigNode newModule, ConfigNode existingNewModule, string ModuleAttribute)
+		private static void mergeModuleStringValues(string newModuleName, /*ref bool exist, ref bool skip,*/ ConfigNode newModule, ConfigNode existingNewModule, string ModuleAttribute)
 		{
 #if (DEBUG)
 			Debug.LogWarning(string.Format("{0}| {1} - {2} is string", Constants.logPrefix, newModuleName, ModuleAttribute));
 #endif
-			if (Constants.breakingModuleAttributes.Contains(string.Concat(newModuleName, Constants.underline, ModuleAttribute)))
+			if (string.IsNullOrEmpty(existingNewModule.GetValue(ModuleAttribute)))
 			{
-#if (DEBUG)
-				Debug.LogWarning(string.Format("{0}| {1} - {2} is of breaking category | {3}", Constants.logPrefix, newModuleName, ModuleAttribute, string.Equals(existingNewModule.GetValue(ModuleAttribute), newModule.GetValue(ModuleAttribute))));
-#endif
-				exist = string.Equals(existingNewModule.GetValue(ModuleAttribute), newModule.GetValue(ModuleAttribute));
-				if (!exist)
-				{
-					skip = true;
-				}
+				//if the value in the config is null or empty then set it
+				existingNewModule.SetValue(ModuleAttribute, newModule.GetValue(ModuleAttribute));
 			}
-			if (!skip)
-			{
-				if (string.IsNullOrEmpty(existingNewModule.GetValue(ModuleAttribute)))
-				{
-					//if the value in the config is null or empty then set it
-					existingNewModule.SetValue(ModuleAttribute, newModule.GetValue(ModuleAttribute));
-				}
-			}
+//			if (Constants.isArrayContaing(string.Concat(newModuleName, Constants.underline, ModuleAttribute), Constants.breakingModuleAttributes))
+//			{
+//#if (DEBUG)
+//				Debug.LogWarning(string.Format("{0}| {1} - {2} is of breaking category | {3}", Constants.logPrefix, newModuleName, ModuleAttribute, string.Equals(existingNewModule.GetValue(ModuleAttribute), newModule.GetValue(ModuleAttribute))));
+//#endif
+//				exist = string.Equals(existingNewModule.GetValue(ModuleAttribute), newModule.GetValue(ModuleAttribute));
+//				if (!exist)
+//				{
+//					skip = true;
+//				}
+//			}
+//			if (!skip)
+//			{
+//				if (string.IsNullOrEmpty(existingNewModule.GetValue(ModuleAttribute)))
+//				{
+//					//if the value in the config is null or empty then set it
+//					existingNewModule.SetValue(ModuleAttribute, newModule.GetValue(ModuleAttribute));
+//				}
+//			}
+			Debug.LogWarning(string.Format("{0}| {1} - {2} is merged with value {3}", Constants.logPrefix, newModuleName, ModuleAttribute, existingNewModule.GetValue(ModuleAttribute)));
 		}
 
 

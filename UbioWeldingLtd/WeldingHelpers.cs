@@ -25,6 +25,12 @@ namespace UbioWeldingLtd
             return inputList;
         }
 
+
+		/// <summary>
+		/// prepares the given Huistyle with the default values of the tool
+		/// </summary>
+		/// <param name="inputGUIStyle"></param>
+		/// <returns></returns>
         public static GUIStyle initGuiStyle(GUIStyle inputGUIStyle)
         {
 			//inputGUIStyle = new GUIStyle();
@@ -38,10 +44,85 @@ namespace UbioWeldingLtd
             return inputGUIStyle;
         }
 
+
+		/// <summary>
+		/// prepares the dropdownlist for a given list of GUIContents
+		/// </summary>
+		/// <param name="categoryList"></param>
+		/// <param name="guiStyle"></param>
+		/// <param name="dropDown"></param>
+		/// <returns></returns>
         public static GUIDropdown initDropDown(List<GUIContent> categoryList, GUIStyle guiStyle,GUIDropdown dropDown)
         {
             dropDown = new GUIDropdown(categoryList[0], categoryList.ToArray(), "button", "box", guiStyle);
             return dropDown;
 		}
+
+
+		/// <summary>
+		/// checks an array for a dedicated value
+		/// </summary>
+		/// <param name="attributeToCheck"></param>
+		/// <param name="arrayToCompare"></param>
+		/// <returns></returns>
+		public static bool isArrayContaing(string attributeToCheck, string[] arrayToCompare)
+		{
+
+			foreach (string attributeEntry in arrayToCompare)
+			{
+				if (string.Equals(attributeEntry.Trim(), attributeToCheck.Trim()))
+				{
+					return true;
+				}
+			}
+			return false;
+		}
+
+
+		/// <summary>
+		/// checks two arrays for shared values and returns them in a new array
+		/// </summary>
+		/// <param name="attributesToCheck"></param>
+		/// <param name="arrayToCompare"></param>
+		/// <returns></returns>
+		public static string[] getSharedArrayValues(string[] attributesToCheck, string[] arrayToCompare)
+		{
+			Debug.Log(string.Format("{0}| Checking Arrays - Array1 contains {1} Values - Array2 Contains {2} Values", Constants.logPrefix, attributesToCheck.Length, arrayToCompare.Length));
+			if (attributesToCheck.Length > 0 && arrayToCompare.Length > 0)
+			{
+				List<string> sharedValues = new List<string>();
+				foreach (string attributeToCheck in attributesToCheck)
+				{
+					foreach (string arrayEntryToCompare in arrayToCompare)
+					{
+						Debug.Log(string.Format("{0}| Checking Arrays - Entry1 {1} - Entry2 {2}", Constants.logPrefix, attributeToCheck.Trim(), arrayEntryToCompare.Trim()));
+						if (string.Equals(attributeToCheck.Trim(), arrayEntryToCompare.Trim()))
+						{
+							Debug.Log(string.Format("{0}| Checking Arrays - shared Value found | {1}", Constants.logPrefix, attributeToCheck));
+							if (!sharedValues.Contains(attributeToCheck))
+							{
+								sharedValues.Add(attributeToCheck);
+								Debug.Log(string.Format("{0}| Checking Arrays - Value {1} added", Constants.logPrefix, attributeToCheck));
+							}
+						}
+					}
+				}
+
+				string[] cleanedList = new string[sharedValues.Count];
+				for (int i = 0; i < sharedValues.Count; i++)
+				{
+					cleanedList[i] = sharedValues[i];
+				}
+
+				return cleanedList;
+			}
+			else
+			{
+				return new string[0];
+			}
+		}
+
+
+
 	}
 }

@@ -1,4 +1,6 @@
 ﻿using System.Reflection;
+using System.Collections.Generic;
+using UnityEngine;
 
 namespace UbioWeldingLtd
 {
@@ -175,15 +177,17 @@ namespace UbioWeldingLtd
 
         public static string[] unchangedModuleAttributes =
         {
-            "ModuleScienceLab_crewsRequired ",
+            "ModuleScienceLab_crewsRequired",
             "ModuleScienceLab_containerModuleIndex",
             "ModuleTestSubject_environments"
         };
 
         public static string[] breakingModuleAttributes = 
         {
+			"FNAntimatterReactor_radius",
             "ModuleScienceExperiment_experimentID"
         };
+
 	}
 
 }

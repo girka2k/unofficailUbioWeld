@@ -59,8 +59,8 @@
     <Compile Include="EditorToolbar.cs" />
     <Compile Include="GUIDropdown.cs" />
     <Compile Include="FileManager.cs" />
-    <Compile Include="ModuleMerger.cs" />
-    <Compile Include="PluginConfiguration.cs" />
+    <Compile Include="ModuleLists.cs" />
+    <Compile Include="WeldingConfiguration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UbioZurWeldingLtd.cs" />
     <Compile Include="Welder.cs" />

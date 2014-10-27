@@ -33,7 +33,8 @@ namespace UbioWeldingLtd
 		private List<GUIContent> _catNames = new List<GUIContent>();
 		private GUIDropdown _catDropdown;
 		private GUIDropdown _techDropdown;
-		private GUIStyle _catListStyle = new GUIStyle();
+		private GUIStyle _guiStyle = new GUIStyle();
+		private GUISkin _guiskin = HighLogic.Skin;
 		private Vector2 _scrollRes = Vector2.zero;
 		private Vector2 _scrollMod = Vector2.zero;
 		private Vector2 _settingsScrollPosition = Vector2.zero;
@@ -54,6 +55,21 @@ namespace UbioWeldingLtd
 					return string.Format("{0}{1}/{2}{3}", Constants.weldPartPath, _welder.Category.ToString(), _welder.Name, Constants.weldPartDefaultFile);
 				}
 			}
+		}
+
+		public Rect editorInfoWindow
+		{
+			get { return _editorInfoWindow; }
+		}
+
+		public GUISkin weldingguiskin
+		{
+			get { return _guiskin; }
+		}
+
+		public GUIStyle weldingguistyle
+		{
+			get { return _guiStyle; }
 		}
 
 		/// <summary>
@@ -83,8 +99,8 @@ namespace UbioWeldingLtd
             _editorMainWindow = new Rect(_config.MainWindowXPosition, _config.MainWindowYPosition, Constants.guiMainWindowW, Constants.guiMainWindowH);
 
 			_catNames = WeldingHelpers.initPartCategories(_catNames);
-			_catListStyle = WeldingHelpers.initGuiStyle(_catListStyle);
-			_catDropdown = WeldingHelpers.initDropDown(_catNames, _catListStyle, _catDropdown);
+			_guiStyle = WeldingHelpers.initGuiStyle(_guiStyle);
+			_catDropdown = WeldingHelpers.initDropDown(_catNames, _guiStyle, _catDropdown);
 		}
 
 		/// <summary>
@@ -188,8 +204,7 @@ namespace UbioWeldingLtd
 		{
 			if (_guiVisible)
 			{
-				//Set the GUI Skin
-				GUI.skin = HighLogic.Skin;
+				GUI.skin = _guiskin;
 
 				switch (_state)
 				{
@@ -276,7 +291,7 @@ namespace UbioWeldingLtd
 			}
 			_welder.processNewCoM();
 
-			_techDropdown = WeldingHelpers.initTechDropDown(_welder.techList, _catListStyle, _techDropdown);
+			_techDropdown = WeldingHelpers.initTechDropDown(_welder.techList, _guiStyle, _techDropdown);
 
 			_scrollMod = Vector2.zero;
 			_scrollRes = Vector2.zero;

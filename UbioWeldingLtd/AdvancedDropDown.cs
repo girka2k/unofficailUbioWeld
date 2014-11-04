@@ -9,7 +9,7 @@ using KSP;
 
 namespace UbioWeldingLtd
 {
-	class AdvancedDropDown
+	public class AdvancedDropDown
 	{
 
 		private Boolean _ListVisible;
@@ -278,11 +278,11 @@ namespace UbioWeldingLtd
 				_listPageOverflow = false;
 			}
 
-			stylePager = new GUIStyle(UbioZurWeldingLtd.instance.weldingguiskin.label) { fontStyle = FontStyle.Italic };
+			stylePager = new GUIStyle(UbioZurWeldingLtd.instance.guiskin.label) { fontStyle = FontStyle.Italic };
 		}
 
 		//Draw the hovering dropdown
-		internal void DrawDropDownList()
+		internal void DrawDropDown()
 		{
 			if (ListVisible)
 			{
@@ -301,7 +301,9 @@ namespace UbioWeldingLtd
 					iStart = _listPageLength * _listPageNum;
 
 					if (_listPageLength * (_listPageNum + 1) < Items.Count)
+					{
 						iEnd = _listPageLength * (_listPageNum + 1);
+					}
 
 					//this moves us down a row to fit the paging buttons in the main loop
 					iPad = 1;
@@ -329,7 +331,9 @@ namespace UbioWeldingLtd
 						SelectedIndex = i;
 					}
 					if (i == SelectedIndex)
+					{
 						GUI.Label(new Rect(ListButtonRect) { x = ListButtonRect.x + ListButtonRect.width - 20 }, "✔");
+					}
 				}
 
 				CloseOnOutsideClick();

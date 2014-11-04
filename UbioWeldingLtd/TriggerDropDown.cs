@@ -9,34 +9,44 @@ using UnityEngine;
 
 namespace UbioWeldingLtd
 {
-	public class TriggerDropDown
+	[KSPAddon(KSPAddon.Startup.EditorAny, false)]
+	public class TriggerDropDown : MonoBehaviour
 	{
 
-		internal AdvancedDropDownManager ddlManager = new AdvancedDropDownManager();
 
+
+		private AdvancedDropDownManager ddlManager = new AdvancedDropDownManager();
+		private Rect _window;
 		private AdvancedDropDown ddlChecksPerSec;
-		private AdvancedDropDown ddlSettingsSkin;
-		private AdvancedDropDown ddlSettingsButtonStyle;
-		private AdvancedDropDown ddlSettingsAlarmSpecs;
-		private AdvancedDropDown ddlSettingsContractAutoOffered;
-		private AdvancedDropDown ddlSettingsContractAutoActive;
 
-		internal void InitDropDowns()
+
+
+
+		public void Awake()
+		{
+			InitDropDowns();
+			RenderingManager.AddToPostDrawQueue(1, DrawGUI);
+		}
+
+
+
+
+		public void InitDropDowns()
 		{
 			String[] strChecksPerSecChoices = { "10", "20", "50", "100", "Custom" };
 
-			ddlChecksPerSec = new AdvancedDropDown(strChecksPerSecChoices, UbioZurWeldingLtd.instance.editorInfoWindow);
+			ddlChecksPerSec = new AdvancedDropDown(strChecksPerSecChoices, _window);
 			ddlChecksPerSec.OnSelectionChanged += ddlChecksPerSec_OnSelectionChanged;
 
 			ddlManager.AddDropDown(ddlChecksPerSec);
 		}
 
-		internal void DestroyDropDowns()
+		private void DestroyDropDowns()
 		{
 			ddlChecksPerSec.OnSelectionChanged -= ddlChecksPerSec_OnSelectionChanged;
 		}
 
-		internal void SetDropDownWindowPositions()
+		private void SetDropDownWindowPositions()
 		{
 			ddlChecksPerSec.windowRect = UbioZurWeldingLtd.instance.editorInfoWindow;
 		}
@@ -48,33 +58,54 @@ namespace UbioWeldingLtd
 			switch (NewIndex)
 			{
 				case 0:
-					settings.BehaviourChecksPerSec = 10;
+					Debug.Log(string.Format("{0}- TriggerDropDown - {1}", Constants.logPrefix, 10));
 					break;
 				case 1:
-					settings.BehaviourChecksPerSec = 20;
+					Debug.Log(string.Format("{0}- TriggerDropDown - {1}", Constants.logPrefix, 20));
 					break;
 				case 2:
-					settings.BehaviourChecksPerSec = 50;
+					Debug.Log(string.Format("{0}- TriggerDropDown - {1}", Constants.logPrefix, 50));
 					break;
 				case 3:
-					settings.BehaviourChecksPerSec = 100;
+					Debug.Log(string.Format("{0}- TriggerDropDown - {1}", Constants.logPrefix, 100));
 					break;
 				default:
-					settings.BehaviourChecksPerSec = settings.BehaviourChecksPerSec_Custom;
+					Debug.Log(string.Format("{0}- TriggerDropDown - {1}", Constants.logPrefix, 40));
 					break;
 			}
 		}
 
 		#endregion
 
-		internal void DrawWindowsPre()
+		private void DrawWindowsPre()
 		{
 			ddlManager.DrawBlockingSelectors();
 		}
 
-		internal void DrawWindowsPost()
+		private void DrawWindowsPost()
 		{
 			ddlManager.DrawDropDownLists();
+		}
+
+		private void DrawWindows()
+		{
+			_window = GUILayout.Window(0, new Rect(Screen.width / 6, Screen.height / 6, Screen.width / 6, Screen.height / 6), FillWindow, "Test window", UbioZurWeldingLtd.instance.guistyle);
+		}
+
+		private void FillWindow(int WindowID)
+		{
+			GUILayout.BeginHorizontal();
+			GUILayout.BeginVertical();
+			ddlChecksPerSec.DrawButton();
+			GUILayout.EndVertical();
+			GUILayout.EndHorizontal();
+		}
+
+		public void DrawGUI()
+		{
+			DrawWindowsPre();
+			DrawWindows();
+			DrawWindowsPost();
 		}
 
 	}

@@ -22,7 +22,7 @@ namespace UbioWeldingLtd
 		}
 
 
-		void NewDDL_OnListVisibleChanged(AdvancedDropDown sender, bool VisibleState)
+		public void NewDDL_OnListVisibleChanged(AdvancedDropDown sender, bool VisibleState)
 		{
 			if (VisibleState)
 			{
@@ -48,7 +48,7 @@ namespace UbioWeldingLtd
 		{
 			foreach (AdvancedDropDown tempDropDown in this)
 			{
-				tempDropDown.DrawDropDownList();
+				tempDropDown.DrawDropDown();
 			}
 		}
 

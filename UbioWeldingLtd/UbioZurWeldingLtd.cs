@@ -21,7 +21,8 @@ namespace UbioWeldingLtd
 		}
 
 		public static UbioZurWeldingLtd instance { get; private set; }
-		
+
+		private AdvancedDropDownManager _advancedDropDownManager = new AdvancedDropDownManager();
 		private Rect _editorErrorDial;
 		private Rect _editorWarningDial;
 		private Rect _editorInfoWindow;
@@ -62,12 +63,12 @@ namespace UbioWeldingLtd
 			get { return _editorInfoWindow; }
 		}
 
-		public GUISkin weldingguiskin
+		public GUISkin guiskin
 		{
 			get { return _guiskin; }
 		}
 
-		public GUIStyle weldingguistyle
+		public GUIStyle guistyle
 		{
 			get { return _guiStyle; }
 		}

@@ -165,12 +165,19 @@ namespace UbioWeldingLtd
 		/// <returns></returns>
 		public static string[] convertFromToStringArray(ModuleAttribute[] genericArray)
 		{
-			string[] stringArray = new string[genericArray.Length];
-			for (int i = 0; i < genericArray.Length; i++)
+			if (genericArray.Length > 0)
 			{
-				stringArray[i] = genericArray[i].attributeName;
+				string[] stringArray = new string[genericArray.Length];
+				for (int i = 0; i < genericArray.Length; i++)
+				{
+					stringArray[i] = genericArray[i].attributeName;
+				}
+				return stringArray;
 			}
-			return stringArray;
+			else
+			{
+				return new string[0];
+			}
 		}
 
 
@@ -188,19 +195,6 @@ namespace UbioWeldingLtd
 				genericArray[i] = new ModuleAttribute(stringArray[i]);
 			}
 			return genericArray;
-		}
-
-
-		/// <summary>
-		/// this will check for an installed module manager for a cleaner reload of the database
-		/// remember that this is still bound to a specific version of ModuleManager
-		/// </summary>
-		/// <returns></returns>
-		public static bool isModuleManagerInstalled()
-		{
-			bool mmInstalled = AssemblyLoader.loadedAssemblies.Any(activeMod => activeMod.assembly.GetName().Name.StartsWith("ModuleManager") && activeMod.url == "");
-			Debug.Log(string.Format("{0} MM installed = {1}", Constants.logPrefix, mmInstalled));
-			return mmInstalled;
 		}
 
 

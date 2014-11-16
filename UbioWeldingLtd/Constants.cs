@@ -11,7 +11,7 @@ namespace UbioWeldingLtd
 	static class Constants
 	{
 		//Logs/debug constants
-		public const string logVersion		  = "v2.0pt5-0.25.0-Unofficial";
+		public const string logVersion		  = "v2.0pt5-0.24.2/0.25.0-Unofficial-v.03";
 		public const string logWarning		  = "WARNING ";
 		public const string logError			= "ERROR ";
 		public const string logPrefix		   = "[WeldingTool] ";
@@ -54,6 +54,8 @@ namespace UbioWeldingLtd
 		public const string guiNameUsed		 = "Name already used by another part!";
 		public const string guiDialOverwrite	= "File already exist, Do you want to overwrite it?";
 		public const string guiDialSaved		= "New part saved and shipped!";
+		public const string guiDBReloading1		= "Database reloading";
+		public const string guiDBReloading2		= "Please be patient!";
 
 		//Settings
 		public const string settingWeldingLock = "UBILOCK9213";
@@ -71,6 +73,7 @@ namespace UbioWeldingLtd
 		public const string settingXmlListFileName = "moduleAttributeList.xml";
 		public const string underline = "_";
 		public static readonly string settingRuntimeDirectory = Assembly.GetExecutingAssembly().Location.Replace(new FileInfo(Assembly.GetExecutingAssembly().Location).Name, "");
+		public static readonly System.Version minModuleManagerVersion = new System.Version(2, 3, 1, 0);
 
 		//Readme
 		public const string setupGeneralLine1 = "The ModuleAttributeList.xml gives you the ability to edit how the Weldingtool will process the merging of certain modules and their attributes.";
@@ -80,6 +83,7 @@ namespace UbioWeldingLtd
 		public const string setupVector4Line1 = "In <Vector4CurveModules> list are modules that will be read as vector4Curves that means they will create curves from floatpoints and tangents. There is a thread in the forum just about the magic of floatpoint tangents.";
 		public const string setupSubmoduleLine1 = "<SubModules> list contains the Submodules that otherwise would be ignored and not merged, Adding an entry here will give the tool the ability to merge the attributes in it.";
 		public const string setupModulesToIgnoreLine1 = "Modules in <ModulesToIgnore> list will be completly ignored from the tool and not get added to the new part.";
+		public const string setupModulesToMultiplyLine1 = "Modules in <ModulesToMultiply> list will be added to the new part no matter how often it already exists.";
 		public const string setupAveragedAttribtesLine1 = "Entries in <AveragedModuleAttributes> will make sure that the tool will not simply add the values of this attribute from the different parts and modules up, but will calculate it as aritmetric mean (average).";
 		public const string setupUnchangedAttribtesLine1 = "Entries in <UnchangedModuleAttributes> list will give the tool the order to not merge the values for this attribute.";
 		public const string setupBreakingAttribtesLine1 = "<BreakingModuleAttributes> might be the most important list of Attributes, the entries here will give the tool the order to check if the values of these attributes are equal, and only allow then the merging or the module, otherwise a new module would be added.";
@@ -207,7 +211,29 @@ namespace UbioWeldingLtd
 
 		public static string[] basicModulesToIgnore =
 		{
-			"TweakScale"
+			"TweakScale",
+			"FMRS_PM",
+			"Variometer",
+			"TrajectoriesVesselSettings",
+			"TelemachusDataLink",
+			"TelemachusPowerDrain",
+			"ProbeControlRoomPart",
+			"RasterPropMonitorComputer",
+			"Proximity",
+			"LazorSystemDockingCamera",
+			"ModuleDockingNodeController",
+			"ModuleDockingNodeNamed",
+			"ModuleStagingToggle",
+			"GoodspeedPump",
+			"ModuleTweakableDockingNode",
+			"KASModuleGrab",
+			"ModuleTweakableRCS",
+			"ModuleTweakableSolarPanel"
+		};
+
+		public static string[] basicModulesToMultiply =
+		{
+			"AntimatterCollector"
 		};
 
 		public static string[] basicAveragedModuleAttributes =

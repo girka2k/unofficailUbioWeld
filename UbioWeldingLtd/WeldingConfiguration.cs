@@ -34,7 +34,6 @@ namespace UbioWeldingLtd
 		private int _MainWindowXPosition = (Screen.width - Constants.guiMainWindowW) / 2;
 		private int _MainWindowYPosition = (Screen.height - Constants.guiMainWindowH) / 2;
 		private bool _dataBaseAutoReload = false;
-		private bool _reloadDbUsingMM = false;
 		private bool _includeAllNodes = false;
 		private bool _allowCareerMode = true;
 		private bool _dontProcessMasslessParts = true;
@@ -48,6 +47,7 @@ namespace UbioWeldingLtd
 		private string[] _vector4CurveModules;
 		private string[] _subModules;
 		private string[] _modulesToIgnore;
+		private string[] _modulesToMultiply;
 		private string[] _averagedModuleAttributes;
 		private string[] _unchangedModuleAttributes;
 		private string[] _breakingModuleAttributes;
@@ -68,12 +68,6 @@ namespace UbioWeldingLtd
 		{
 			get { return _dataBaseAutoReload; }
 			set { _dataBaseAutoReload = value; }
-		}
-
-		public bool reloadDbUsingMM
-		{
-			get { return _reloadDbUsingMM; }
-			set { _reloadDbUsingMM = value; }
 		}
 
 		public bool includeAllNodes
@@ -152,6 +146,12 @@ namespace UbioWeldingLtd
 		{
 			get { return _modulesToIgnore; }
 			set { _modulesToIgnore = value; }
+		}
+
+		public string[] modulesToMultiply
+		{
+			get { return _modulesToMultiply; }
+			set { _modulesToMultiply = value; }
 		}
 
 		public string[] averagedModuleAttributes

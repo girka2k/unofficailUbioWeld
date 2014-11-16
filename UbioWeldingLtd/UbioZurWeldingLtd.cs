@@ -21,7 +21,7 @@ namespace UbioWeldingLtd
 		}
 
 		public static UbioZurWeldingLtd instance { get; private set; }
-
+		
 		private AdvancedDropDownManager _advancedDropDownManager = new AdvancedDropDownManager();
 		private Rect _editorErrorDial;
 		private Rect _editorWarningDial;
@@ -43,6 +43,7 @@ namespace UbioWeldingLtd
 		private WeldingConfiguration _config;
 		private bool _guiVisible = false;
 		private bool _mainWindowsSettingsMode = false;
+		static public bool isReloading = false;
 		private string filepath
 		{
 			get
@@ -66,7 +67,7 @@ namespace UbioWeldingLtd
 		public GUISkin guiskin
 		{
 			get { return _guiskin; }
-		}
+			}
 
 		public GUIStyle guistyle
 		{
@@ -102,6 +103,7 @@ namespace UbioWeldingLtd
 			_catNames = WeldingHelpers.initPartCategories(_catNames);
 			_guiStyle = WeldingHelpers.initGuiStyle(_guiStyle);
 			_catDropdown = WeldingHelpers.initDropDown(_catNames, _guiStyle, _catDropdown);
+			DatabaseHandler.initMMAssembly();
 		}
 
 		/// <summary>
@@ -211,6 +213,7 @@ namespace UbioWeldingLtd
 				{
 					case DisplayState.none :
 						EditorLogic.fetch.Unlock(Constants.settingPreventClickThroughLock);
+						EditorLogic.fetch.Unlock(Constants.settingWeldingLock);
 						break;
 					case DisplayState.weldError :
                         _editorErrorDial = GUILayout.Window((int)_state, _editorErrorDial, OnErrorDisplay, Constants.weldManufacturer);
@@ -253,6 +256,7 @@ namespace UbioWeldingLtd
 			bool warning = false;
 			_welder = new Welder();
 
+			partToWeld.transform.eulerAngles = Vector3.up;
 			WeldingReturn ret = _welder.weldThisPart(partToWeld);
 
 			if (ret < 0)
@@ -344,7 +348,6 @@ namespace UbioWeldingLtd
 				_config.clearEditor = GUILayout.Toggle(_config.clearEditor, Constants.guiClearEditorGUIContent);
 				GUILayout.Space(10.0f);
 				GUILayout.Label("Strength params calculation method");
-//				_config.StrengthCalcMethod = (StrengthParamsCalcMethod)GUILayout.SelectionGrid((int)_config.StrengthCalcMethod, Constants.StrengthParamsCalcMethodsGUIContent, 1, GUILayout.MaxWidth(140));
 				foreach (StrengthParamsCalcMethod Method in Enum.GetValues(typeof(StrengthParamsCalcMethod)))
 				{
 					if (GUILayout.Toggle((_config.StrengthCalcMethod == Method), Constants.StrengthParamsCalcMethodsGUIContent[(int)Method], _settingsToggleGroupStyle))
@@ -354,7 +357,6 @@ namespace UbioWeldingLtd
 				}
 				GUILayout.Space(10.0f);
 				GUILayout.Label("MaxTemp calculation method");
-//				_config.MaxTempCalcMethod = (MaxTempCalcMethod)GUILayout.SelectionGrid((int)_config.MaxTempCalcMethod, Constants.MaxTempCalcMethodsGUIContent, 1, GUILayout.MaxWidth(140));
 				foreach (MaxTempCalcMethod Method in Enum.GetValues(typeof(MaxTempCalcMethod)))
 				{
 					if (GUILayout.Toggle((_config.MaxTempCalcMethod == Method), Constants.MaxTempCalcMethodsGUIContent[(int)Method], _settingsToggleGroupStyle))
@@ -364,7 +366,6 @@ namespace UbioWeldingLtd
 				}
 				GUILayout.EndScrollView();
 
-//				GUILayout.Space(10.0f);
 				if (GUILayout.Button(Constants.guiSaveSettingsButtonGUIContent, GUILayout.MaxWidth(100)))
 				{
 					FileManager.saveConfig(_config);
@@ -476,17 +477,30 @@ namespace UbioWeldingLtd
 		 */
 		private void OnSavedDisplay(int windowID)
 		{
+			bool MMPathLoaderIsReady = (bool)DatabaseHandler.DynaInvokeMMPatchLoaderMethod("IsReady");
 			GUILayout.BeginVertical();
-			GUILayout.BeginHorizontal();
+			if (DatabaseHandler.isReloading)
+			{
+				GUILayout.Label(Constants.guiDBReloading1);
+				GUILayout.Label(Constants.guiDBReloading2);
+				if (!MMPathLoaderIsReady)
+				{
+					GUILayout.Label(String.Format("ModuleManager progress: {0:P0}", (float)DatabaseHandler.DynaInvokeMMPatchLoaderMethod("ProgressFraction")));
+				}
+			}
+			else
+			{
 			GUILayout.Label(Constants.guiDialSaved);
-			GUILayout.EndHorizontal();
-			GUILayout.BeginHorizontal();
-			GUILayout.EndHorizontal();
 			GUILayout.FlexibleSpace();
 			if (GUILayout.Button(Constants.guiOK))
 			{
 				ClearEditor();
 				_state = DisplayState.none;
+			}
+				else if (GUILayout.Button(Constants.guiCancel))
+				{
+					ClearEditor();
+				}
 			}
 			GUILayout.EndVertical();
 
@@ -656,15 +670,8 @@ namespace UbioWeldingLtd
 
 			if (_config.dataBaseAutoReload)
 			{
-				if (_config.reloadDbUsingMM && WeldingHelpers.isModuleManagerInstalled())
-				{
 					StartCoroutine(DatabaseHandler.DatabaseReloadWithMM());
 				}
-				else
-				{
-					DatabaseHandler.ReloadDatabase();
-				}
-			}
 		}
 
 		/*
@@ -672,15 +679,12 @@ namespace UbioWeldingLtd
 		 */
 		private void ClearEditor()
 		{
-			if (_config.clearEditor)
-			{
-				if (_config.useStockToolbar || EditorLogic.SelectedPart == null)
+			if (EditorLogic.SelectedPart == null)
 				{
 					EditorLogic.fetch.PartSelected = EditorLogic.startPod;
 				}
 				EditorLogic.fetch.DestroySelectedPart();
 				EditorPartList.Instance.Refresh();
-			}
 			EditorLogic.fetch.Unlock(Constants.settingWeldingLock);
 		}
 
@@ -692,12 +696,10 @@ namespace UbioWeldingLtd
 			Vector2 pointerPos = Input.mousePosition;
 
 			pointerPos.y = Screen.height - pointerPos.y;
-			//            if (rect.Contains(pointerPos) && !EditorLogic.softLock)
 			if (rect.Contains(pointerPos))
 			{
-				EditorLogic.fetch.Lock(true, true, true, Constants.settingPreventClickThroughLock);
+				EditorLogic.fetch.Lock(false, false, false, Constants.settingPreventClickThroughLock);
 			}
-			//            else if (!rect.Contains(pointerPos) && EditorLogic.softLock)
 			else if (!rect.Contains(pointerPos))
 			{
 				EditorLogic.fetch.Unlock(Constants.settingPreventClickThroughLock);

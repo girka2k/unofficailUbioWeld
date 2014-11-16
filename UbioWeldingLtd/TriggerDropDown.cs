@@ -13,14 +13,9 @@ namespace UbioWeldingLtd
 	public class TriggerDropDown : MonoBehaviour
 	{
 
-
-
 		private AdvancedDropDownManager ddlManager = new AdvancedDropDownManager();
 		private Rect _window;
 		private AdvancedDropDown ddlChecksPerSec;
-
-
-
 
 		public void Awake()
 		{
@@ -28,12 +23,11 @@ namespace UbioWeldingLtd
 			RenderingManager.AddToPostDrawQueue(1, DrawGUI);
 		}
 
-
-
-
 		public void InitDropDowns()
 		{
 			String[] strChecksPerSecChoices = { "10", "20", "50", "100", "Custom" };
+
+			_window = new Rect(Screen.width / 6, Screen.height / 6, Screen.width / 3, Screen.height / 3);
 
 			ddlChecksPerSec = new AdvancedDropDown(strChecksPerSecChoices, _window);
 			ddlChecksPerSec.OnSelectionChanged += ddlChecksPerSec_OnSelectionChanged;
@@ -48,7 +42,7 @@ namespace UbioWeldingLtd
 
 		private void SetDropDownWindowPositions()
 		{
-			ddlChecksPerSec.windowRect = UbioZurWeldingLtd.instance.editorInfoWindow;
+			ddlChecksPerSec.windowRect = _window;
 		}
 
 		#region DDLEvents code
@@ -89,7 +83,7 @@ namespace UbioWeldingLtd
 
 		private void DrawWindows()
 		{
-			_window = GUILayout.Window(0, new Rect(Screen.width / 6, Screen.height / 6, Screen.width / 6, Screen.height / 6), FillWindow, "Test window", UbioZurWeldingLtd.instance.guistyle);
+			_window = GUILayout.Window(0, new Rect(Screen.width / 6, Screen.height / 6, Screen.width / 3, Screen.height / 3), FillWindow, "", UbioZurWeldingLtd.instance.guistyle);
 		}
 
 		private void FillWindow(int WindowID)

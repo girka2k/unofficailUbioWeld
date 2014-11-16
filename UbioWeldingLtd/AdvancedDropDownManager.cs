@@ -29,7 +29,7 @@ namespace UbioWeldingLtd
 				foreach (AdvancedDropDown ddlTemp in this)
 				{
 					if (sender != ddlTemp)
-						ddlTemp.ListVisible = false;
+						ddlTemp.listVisible = false;
 				}
 			}
 		}

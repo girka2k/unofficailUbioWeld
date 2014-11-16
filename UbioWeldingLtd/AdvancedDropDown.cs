@@ -12,7 +12,7 @@ namespace UbioWeldingLtd
 	public class AdvancedDropDown
 	{
 
-		private Boolean _ListVisible;
+		private Boolean _listVisible;
 		private Rect _rectButton;
 		private Rect _rectListBox;
 		private GUIStyle stylePager;
@@ -42,33 +42,41 @@ namespace UbioWeldingLtd
 		public delegate void ListVisibleChangedHandler(AdvancedDropDown sender, Boolean VisibleState);
 		public event ListVisibleChangedHandler OnListVisibleChanged;
 
-		public AdvancedDropDown(IEnumerable<String> Items, Int32 Selected, Rect WindowRect)	: this(Items, WindowRect)
+		public AdvancedDropDown(IEnumerable<String> Items, Int32 Selected, Rect WindowRect)
 		{
-			SelectedIndex = Selected;
+			selectedIndex = Selected;
+			this.items = Items.ToList<String>();
+			this._windowRect = WindowRect;
+
+			Debug.Log(string.Format("{0}- {1} | {2}", Constants.logPrefix, items.Count, _windowRect.height));
 		}
 
-
-		public AdvancedDropDown(IEnumerable<String> Items, Rect WindowRect)	: this(WindowRect)
+		public AdvancedDropDown(IEnumerable<String> Items, Rect WindowRect)
 		{
-			this.Items = Items.ToList<String>();
+			this._windowRect = WindowRect;
+			this.items = Items.ToList<String>();
+
+			Debug.Log(string.Format("{0}- {1} | {2}", Constants.logPrefix, items.Count, _windowRect.height));
 		}
 
 		public AdvancedDropDown(Rect WindowRect)
 		{
 			this._windowRect = WindowRect;
-			_ListVisible = false;
-			SelectedIndex = 0;
+			_listVisible = false;
+			selectedIndex = 0;
+
+			Debug.Log(string.Format("{0}- {1} | {2}", Constants.logPrefix, items.Count, _windowRect.height));
 		}
 
 
 		//properties to use
-		public List<String> Items
+		public List<String> items
 		{
 			get;
 			set;
 		}
 
-		public Int32 SelectedIndex
+		public Int32 selectedIndex
 		{
 			get;
 			set;
@@ -76,7 +84,7 @@ namespace UbioWeldingLtd
 
 		public String SelectedValue
 		{
-			get { return Items[SelectedIndex]; }
+			get { return items[selectedIndex]; }
 		}
 
 		public Rect windowRect
@@ -85,19 +93,19 @@ namespace UbioWeldingLtd
 			set { _windowRect = value; }
 		}
 
-		public Boolean ListVisible
+		public Boolean listVisible
 		{
-			get { return _ListVisible; }
+			get { return _listVisible; }
 			set
 			{
-				_ListVisible = value;
-				if (_ListVisible)
+				_listVisible = value;
+				if (_listVisible)
 				{
 					CalcPagesAndSizes();
 				}
 				if (OnListVisibleChanged != null)
 				{
-					OnListVisibleChanged(this, _ListVisible);
+					OnListVisibleChanged(this, _listVisible);
 				}
 			}
 		}
@@ -142,15 +150,17 @@ namespace UbioWeldingLtd
 		internal void DrawBlockingSelector()
 		{
 			//do we need to draw the blocker
-			if (ListVisible)
+			if (listVisible)
 			{
 				//This will collect the click event before any other controls under the listrect
 				if (GUI.Button(_rectListBox, "", styleListBlocker))
 				{
-					Int32 oldIndex = SelectedIndex;
+					Int32 oldIndex = selectedIndex;
 
 					if (!_listPageOverflow)
-						SelectedIndex = (Int32)Math.Floor((Event.current.mousePosition.y - _rectListBox.y) / (_rectListBox.height / Items.Count));
+					{
+						selectedIndex = (Int32)Math.Floor((Event.current.mousePosition.y - _rectListBox.y) / (_rectListBox.height / items.Count));
+					}
 					else
 					{
 						//do some maths to work out the actual index
@@ -169,9 +179,9 @@ namespace UbioWeldingLtd
 							}
 							if (_listPageNum < 0)
 							{
-								_listPageNum = (Int32)Math.Floor((Single)Items.Count / _listPageLength);
+								_listPageNum = (Int32)Math.Floor((Single)items.Count / _listPageLength);
 							}
-							if (_listPageNum * _listPageLength > Items.Count)
+							if (_listPageNum * _listPageLength > items.Count)
 							{
 								_listPageNum = 0;
 							}
@@ -179,20 +189,20 @@ namespace UbioWeldingLtd
 						}
 						else
 						{
-							SelectedIndex = (_listPageNum * _listPageLength) + (SelectedRow - 1);
+							selectedIndex = (_listPageNum * _listPageLength) + (SelectedRow - 1);
 						}
-						if (SelectedIndex >= Items.Count)
+						if (selectedIndex >= items.Count)
 						{
-							SelectedIndex = oldIndex;
+							selectedIndex = oldIndex;
 							return;
 						}
 					}
 					//Throw an event or some such from here
 					if (OnSelectionChanged != null)
 					{
-						OnSelectionChanged(this, oldIndex, SelectedIndex);
+						OnSelectionChanged(this, oldIndex, selectedIndex);
 					}
-					ListVisible = false;
+					listVisible = false;
 				}
 			}
 		}
@@ -203,21 +213,30 @@ namespace UbioWeldingLtd
 			Boolean blnReturn = false;
 
 			if (_styleButtonToDraw == null)
+			{
 				blnReturn = GUILayout.Button(SelectedValue);
+			}
 			else
+			{
 				blnReturn = GUILayout.Button(SelectedValue, _styleButtonToDraw);
+			}
 
-			if (blnReturn) ListVisible = !ListVisible;
+			if (blnReturn)
+			{
+				listVisible = !listVisible;
+			}
 
 			//get the drawn button rectangle
 			if (Event.current.type == EventType.repaint)
 			{
 				_rectButton = GUILayoutUtility.GetLastRect();
 			}
+
 			//draw a dropdown symbol on the right edge
 			if (_dropDownGlyph != null)
 			{
 				Rect rectDropIcon = new Rect(_rectButton) { x = (_rectButton.x + _rectButton.width - 20), width = 20 };
+
 				if (_dropDownSeparator != null)
 				{
 					Rect rectDropSep = new Rect(rectDropIcon) { x = (rectDropIcon.x - _dropDownSeparator.calculateWidth), width = _dropDownSeparator.calculateWidth };
@@ -230,6 +249,7 @@ namespace UbioWeldingLtd
 						GUI.Box(rectDropSep, _dropDownSeparator.content, _dropDownSeparator.style);
 					}
 				}
+
 				if (_dropDownGlyph.style == null)
 				{
 					GUI.Box(rectDropIcon, _dropDownGlyph.content);
@@ -240,7 +260,6 @@ namespace UbioWeldingLtd
 				}
 
 			}
-
 			return blnReturn;
 		}
 
@@ -251,11 +270,13 @@ namespace UbioWeldingLtd
 			{
 				x = _rectButton.x + _windowRect.x + _vectListBoxOffset.x,
 				y = _rectButton.y + _windowRect.y + _rectButton.height + _vectListBoxOffset.y,
-				height = (Items.Count * _listItemHeight) + (_listBoxPadding.top + _listBoxPadding.bottom)
+				height = (items.Count * _listItemHeight) + (_listBoxPadding.top + _listBoxPadding.bottom)
 			};
 
+			Debug.Log(string.Format("{0}- {1} | {2}", Constants.logPrefix, (_rectListBox.y + _rectListBox.height), (_windowRect.y + _windowRect.height)));
+
 			//if it doesnt fit below the list
-			if ((_rectListBox.y + _rectListBox.height) > _windowRect.y + _windowRect.height)
+			if ((_rectListBox.y + _rectListBox.height) > (_windowRect.y + _windowRect.height))
 			{
 				if (_rectListBox.height < _windowRect.height - 8)
 				{
@@ -270,7 +291,7 @@ namespace UbioWeldingLtd
 					_rectListBox.y = 4;
 					_rectListBox.height = (Single)(_listItemHeight * Math.Floor((_windowRect.height - 8) / _listItemHeight));
 					_listPageLength = (Int32)(Math.Floor((_windowRect.height - 8) / _listItemHeight) - 1);
-					_listPageNum = (Int32)Math.Floor((Double)SelectedIndex / _listPageLength);
+					_listPageNum = (Int32)Math.Floor((Double)selectedIndex / _listPageLength);
 				}
 			}
 			else
@@ -284,23 +305,30 @@ namespace UbioWeldingLtd
 		//Draw the hovering dropdown
 		internal void DrawDropDown()
 		{
-			if (ListVisible)
+			if (listVisible)
 			{
 				GUI.depth = 0;
 
-				if (_styleListBoxToDraw == null) _styleListBoxToDraw = GUI.skin.box;
-				if (_styleListItemToDraw == null) _styleListItemToDraw = GUI.skin.label;
+				if (_styleListBoxToDraw == null)
+				{
+					_styleListBoxToDraw = GUI.skin.box;
+				}
+
+				if (_styleListItemToDraw == null)
+				{
+					_styleListItemToDraw = GUI.skin.label;
+				}
 
 				//and draw it
 				GUI.Box(_rectListBox, "", _styleListBoxToDraw);
 
-				Int32 iStart = 0, iEnd = Items.Count, iPad = 0;
+				Int32 iStart = 0, iEnd = items.Count, iPad = 0;
 				if (_listPageOverflow)
 				{
 					//calc the size of each page
 					iStart = _listPageLength * _listPageNum;
 
-					if (_listPageLength * (_listPageNum + 1) < Items.Count)
+					if (_listPageLength * (_listPageNum + 1) < items.Count)
 					{
 						iEnd = _listPageLength * (_listPageNum + 1);
 					}
@@ -309,7 +337,7 @@ namespace UbioWeldingLtd
 					iPad = 1;
 
 					//Draw paging buttons
-					GUI.Label(new Rect(_rectListBox) { x = _rectListBox.x + _listBoxPadding.left, height = 20 }, String.Format("Page {0}/{1:0}", _listPageNum + 1, Math.Floor((Single)Items.Count / _listPageLength) + 1), stylePager);
+					GUI.Label(new Rect(_rectListBox) { x = _rectListBox.x + _listBoxPadding.left, height = 20 }, String.Format("Page {0}/{1:0}", _listPageNum + 1, Math.Floor((Single)items.Count / _listPageLength) + 1), stylePager);
 					GUI.Button(new Rect(_rectListBox) { x = _rectListBox.x + _rectListBox.width - 80 - _listBoxPadding.right, y = _rectListBox.y + 2, width = 40, height = 16 }, "Prev");
 					GUI.Button(new Rect(_rectListBox) { x = _rectListBox.x + _rectListBox.width - 40 - _listBoxPadding.right, y = _rectListBox.y + 2, width = 40, height = 16 }, "Next");
 				}
@@ -325,12 +353,12 @@ namespace UbioWeldingLtd
 						height = 20
 					};
 
-					if (GUI.Button(ListButtonRect, Items[i], _styleListItemToDraw))
+					if (GUI.Button(ListButtonRect, items[i], _styleListItemToDraw))
 					{
-						ListVisible = false;
-						SelectedIndex = i;
+						listVisible = false;
+						selectedIndex = i;
 					}
-					if (i == SelectedIndex)
+					if (i == selectedIndex)
 					{
 						GUI.Label(new Rect(ListButtonRect) { x = ListButtonRect.x + ListButtonRect.width - 20 }, "✔");
 					}
@@ -343,9 +371,9 @@ namespace UbioWeldingLtd
 
 		internal Boolean CloseOnOutsideClick()
 		{
-			if (ListVisible && Event.current.type == EventType.mouseDown && !_rectListBox.Contains(Event.current.mousePosition))
+			if (listVisible && Event.current.type == EventType.mouseDown && !_rectListBox.Contains(Event.current.mousePosition))
 			{
-				ListVisible = false;
+				listVisible = false;
 				return true;
 			}
 			else

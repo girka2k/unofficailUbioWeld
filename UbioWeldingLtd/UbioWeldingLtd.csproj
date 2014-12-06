@@ -50,10 +50,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AdvancedDropDown.cs" />
-    <Compile Include="AdvancedDropDownManager.cs" />
-    <Compile Include="TriggerDropDown.cs" />
-    <Compile Include="EnumExtensions.cs" />
     <Compile Include="OldWeldingPluginConfig.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="EditorToolbar.cs" />

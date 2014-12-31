@@ -1,15 +1,26 @@
-Because [B]UbioZur[/B] has kindly allowed to update his work, [B]Alewx [/B]and I have released the next update for this great mod.
+Because [B]UbioZur[/B] has kindly allowed to update his work, [B]Girka2k[/B] and I have released the next update for this great mod.
 
-[URL="https://github.com/girka2k/unofficailUbioWeld/releases/download/Unofficial-v.05/UbioWeldingLtd-0.25.0-Unofficial-v.05.zip"][SIZE=5][B]Download[/B][/SIZE][/URL]
+[URL="https://github.com/Alewx/unofficailUbioWeld/releases/download/Version-2.1/UbioWeldingLtd_2_1_0-0_90.rar"][SIZE=5][B]Download[/B][/SIZE][/URL]
 
 [B][I]Latest changes:[/B]
 [LIST]
-[*]	[U]Fixed wrong rescaling of some models in KSP 0.25[/U]
-[*]	Improved database reloading with ModuleManager installed (still incompatible with LOT of other mods)
-[*]	Updated <ModulesToIgnore> list
-[*]	Dropped compatibility with KSP 0.24.2
+[*]	Compatibility with KSP 0.90
+[*]	Added Partselection
+[*]	Fixed problems with Config laoding
+[*]	Added <MaximizedModuleAttributes> for values where only the highest is wanted like the new SAS Level
+[*]	Added <ModulesToMultiply> for Modules that shall be added mutliple times
+[*]	Fixed problems with Modulemerging where sometimes modules would not be added correctly
 [/LIST][/I]
 [Spoiler=Full history of changes]
+2014-12-31 (ver2.1.0)
+[LIST]
+[*]	Compatibility with KSP 0.90
+[*]	Added Partselection
+[*]	Fixed problems with Config laoding
+[*]	Added <MaximizedModuleAttributes> for values where only the highest is wanted like the new SAS Level
+[*]	Added <ModulesToMultiply> for Modules that shall be added mutliple times
+[*]	Fixed problems with Modulemerging where sometimes modules would not be added correctly
+[/LIST]
 2014-12-03 (ver.05)
 [LIST]
 [*]	Fixed wrong rescaling of some models in KSP 0.25
@@ -88,8 +99,8 @@ The [URL="http://forum.kerbalspaceprogram.com/threads/38577-0-22-UbioZur-Welding
 
 [B]Legal stuff:[/B]
 [I]This work based on [B]Malkuth[/B]'s [URL="http://forum.kerbalspaceprogram.com/threads/38577-0-22-UbioZur-Welding-Ltd-2-0-Playtest-5-Now-In-Game-Tool?p=1002144&viewfull=1#post1002144"]update [/URL]for [B]UbioZur[/B]'s original code.
-[COLOR="#696969"]All rights to original source code belong to [B]UbioZur[/B], the rights to subsequent code changes belong to their authors.[/COLOR][/I]
-
+[CENTER][URL="http://creativecommons.org/licenses/by-nc-sa/4.0/"][IMG]https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png[/IMG][/URL][/CENTER]
+We will open a new thread the moment we change from maintaining this tool to releasing out own tool for this work.
 Please note this is [COLOR="#FF0000"]not [/COLOR]an official release from [B]UbioZur[/B]!!!
 
 Thank you [B]UbioZur[/B] for kind permission to continue your work!

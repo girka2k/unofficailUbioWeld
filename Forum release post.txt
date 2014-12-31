@@ -1,6 +1,6 @@
 Because [B]UbioZur[/B] has kindly allowed to update his work, [B]Girka2k[/B] and I have released the next update for this great mod.
 
-[URL="https://github.com/Alewx/unofficailUbioWeld/releases/download/Version-2.1/UbioWeldingLtd_2_1_0-0_90.rar"][SIZE=5][B]Download[/B][/SIZE][/URL]
+[URL="https://github.com/Alewx/unofficailUbioWeld/releases/download/Version-2.1-Unofficial/UbioWeldingLtd_2.1-0.90-Unofficial.rar"][SIZE=5][B]Download[/B][/SIZE][/URL]
 
 [B][I]Latest changes:[/B]
 [LIST]
@@ -94,13 +94,14 @@ Because [B]UbioZur[/B] has kindly allowed to update his work, [B]Girka2k[/B] and
 
 [URL="https://github.com/girka2k/unofficailUbioWeld"]Sources[/URL]
 
-Please note that this version is [B]incompatible with KSP 0.24.2![/B]
+Please note that this version is [B]incompatible with KSP 0.25![/B]
+The [URL="http://forum.kerbalspaceprogram.com/threads/38577-0-22-UbioZur-Welding-Ltd-2-0-Dev-STOPPED?p=1574784&viewfull=1#post1574784"]latest version for 0.25[/URL]
 The [URL="http://forum.kerbalspaceprogram.com/threads/38577-0-22-UbioZur-Welding-Ltd-2-0-Dev-STOPPED?p=1516107&viewfull=1#post1516107"]latest version for 0.24.2[/URL]
 
 [B]Legal stuff:[/B]
 [I]This work based on [B]Malkuth[/B]'s [URL="http://forum.kerbalspaceprogram.com/threads/38577-0-22-UbioZur-Welding-Ltd-2-0-Playtest-5-Now-In-Game-Tool?p=1002144&viewfull=1#post1002144"]update [/URL]for [B]UbioZur[/B]'s original code.
-[CENTER][URL="http://creativecommons.org/licenses/by-nc-sa/4.0/"][IMG]https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png[/IMG][/URL][/CENTER]
-We will open a new thread the moment we change from maintaining this tool to releasing out own tool for this work.
-Please note this is [COLOR="#FF0000"]not [/COLOR]an official release from [B]UbioZur[/B]!!!
+[URL="http://creativecommons.org/licenses/by-nc-sa/4.0/"][IMG]https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png[/IMG][/URL]
+We will open a new thread the moment we change from maintaining this tool to releasing our own tool for this mod.
+Please note this is [COLOR="#FF0000"]not [/COLOR]an official release from [B]UbioZur[/B]!!![/I]
 
 Thank you [B]UbioZur[/B] for kind permission to continue your work!

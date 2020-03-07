@@ -15,11 +15,8 @@ namespace UbioWeldingLtd
 		/// prepares the Categories for the saveing window
 		/// </summary>
 		/// <param name="inputList"></param>
-		/// <param name="inputDropDown"></param>
-		/// <param name="inputGUIStyle"></param>
 		public static List<GUIContent> initPartCategories(List<GUIContent> inputList)
 		{
-			//inputList = new List<GUIContent>();
 			List<string> catlist = new List<string>(System.Enum.GetNames(typeof(PartCategories)));
 			catlist.Remove(PartCategories.none.ToString());
 			foreach (string cat in catlist)
@@ -27,6 +24,38 @@ namespace UbioWeldingLtd
 				inputList.Add(new GUIContent(cat));
 			}
 			return inputList;
+		}
+
+
+		/// <summary>
+		/// creates a new dropdownmenu list for the techs that are required for the current welding part.
+		/// </summary>
+		/// <param name="techList"></param>
+		/// <param name="guiStyle"></param>
+		/// <param name="dropDown"></param>
+		/// <returns></returns>
+		public static GUIDropdown initVesselTypeDropDown(List<string> vesselTypeList, GUIStyle guiStyle, GUIDropdown dropDown)
+		{
+			List<GUIContent> contentList = new List<GUIContent>();
+
+			List<string> allVesselTypes = new List<string>(System.Enum.GetNames(typeof(VesselType)));
+
+			Debug.Log(string.Format("{0} vessel types Count = {1}", Constants.logPrefix, vesselTypeList.Count()));
+			foreach (string vesselTypeID in vesselTypeList)
+			{
+				string vesselTypeTitle = vesselTypeID; //for case, when techID will not be found - the length of the list of titles always must match the length of the list of techID's.
+				foreach (String vesselType in allVesselTypes)
+				{
+					if (vesselType == vesselTypeID)
+					{
+						vesselTypeTitle = vesselType;
+						break;
+					}
+				}
+				contentList.Add(new GUIContent(vesselTypeTitle));
+			}
+			dropDown = new GUIDropdown(contentList[0], contentList.ToArray(), "button", "box", guiStyle, 3);
+			return dropDown;
 		}
 
 
@@ -69,7 +98,6 @@ namespace UbioWeldingLtd
 		/// <returns></returns>
 		public static GUIStyle initGuiStyle(GUIStyle inputGUIStyle)
 		{
-			//inputGUIStyle = new GUIStyle();
 			inputGUIStyle.normal.textColor = Color.white;
 			inputGUIStyle.onHover.background =
 			inputGUIStyle.hover.background = new Texture2D(2, 2);
@@ -101,7 +129,7 @@ namespace UbioWeldingLtd
 		/// <param name="attributeToCheck"></param>
 		/// <param name="arrayToCompare"></param>
 		/// <returns></returns>
-		public static bool isArrayContaing(string attributeToCheck, string[] arrayToCompare)
+		public static bool isArrayContaining(string attributeToCheck, string[] arrayToCompare)
 		{
 
 			foreach (string attributeEntry in arrayToCompare)
@@ -203,11 +231,11 @@ namespace UbioWeldingLtd
 		/// this rounds Vector3 coordinates to --Constants.weldNumberOfFractionalDigits-- fractional digits
 		/// </summary>
 		/// <returns></returns>
-		public static Vector3 RoundVector3(Vector3 inVector)
+		public static Vector3 RoundVector3(Vector3 inVector, int digits)
 		{
-			float x = (float)Math.Round(inVector.x, Constants.weldNumberOfFractionalDigits);
-			float y = (float)Math.Round(inVector.y, Constants.weldNumberOfFractionalDigits);
-			float z = (float)Math.Round(inVector.z, Constants.weldNumberOfFractionalDigits);
+			float x = (float)(Math.Round(inVector.x, digits));
+			float y = (float)(Math.Round(inVector.y, digits));
+			float z = (float)(Math.Round(inVector.z, digits));
 			return new Vector3(x, y, z);
 		}
 
@@ -216,9 +244,9 @@ namespace UbioWeldingLtd
 		/// this rounds float value to --Constants.weldNumberOfFractionalDigits-- fractional digits
 		/// </summary>
 		/// <returns></returns>
-		public static float RoundFloat(float inValue)
+		public static float RoundFloat(float inValue, int digits)
 		{
-			return (float)Math.Round(inValue, Constants.weldNumberOfFractionalDigits);
+			return (float)(Math.Round(inValue, digits));
 		}
 
 
@@ -250,6 +278,110 @@ namespace UbioWeldingLtd
 				text = text.Replace(textToRemove, "");
 				//text = text.Substring(0, text.Length - textToRemove.Length);
 			}
+		}
+
+
+
+		public static float angleClamp(float input, float min, float max)
+		{
+			while (input >= max)
+			{
+				input -= 360;
+			}
+
+			while (input < min)
+			{
+				input += 360;
+			}
+			return input;
+		}
+
+
+		/// <summary>
+		/// limits a rotationvector to a value between 0 and 359 as 360 is just 0
+		/// </summary>
+		/// <param name="inputVector"></param>
+		/// <returns></returns>
+		public static Vector3 limitRotationAngle(Vector3 inputVector)
+		{
+			bool[] angleLimiting = { false, false, false };
+			if (RoundFloat(inputVector.x, 3).Equals(360))
+			{
+				angleLimiting[0] = true;
+			}
+			if (RoundFloat(inputVector.y, 3).Equals(360))
+			{
+				angleLimiting[1] = true;
+			}
+			if (RoundFloat(inputVector.z, 3).Equals(360))
+			{
+				angleLimiting[2] = true;
+			}
+			return new Vector3(angleLimiting[0] ? 0 : inputVector.x, angleLimiting[1] ? 0 : inputVector.y, angleLimiting[2] ? 0 : inputVector.z);
+		}
+
+
+		public static bool isVectorEqualFactor(Vector3 inputVector, float factor)
+		{
+			bool[] isVectorEqual = { false, false, false };
+			if (RoundFloat(inputVector.x, 3).Equals(RoundFloat(factor, 3)))
+			{
+				isVectorEqual[0] = true;
+			}
+			if (RoundFloat(inputVector.y, 3).Equals(RoundFloat(factor, 3)))
+			{
+				isVectorEqual[1] = true;
+			}
+			if (RoundFloat(inputVector.z, 3).Equals(RoundFloat(factor, 3)))
+			{
+				isVectorEqual[2] = true;
+			}
+			foreach (bool b in isVectorEqual)
+			{
+				if (b == false)
+				{
+					return false;
+				}
+			}
+			return true;
+		}
+
+
+		public static Vector3 multiplyVector3(Vector3 VectorOne, Vector3 VectorTwo)
+		{
+			return new Vector3(VectorOne.x * VectorTwo.x, VectorOne.y * VectorTwo.y, VectorOne.z * VectorTwo.z);
+		}
+
+
+		public static string loadListIntoString<T>(string buildingResult, List<T> list, string seperator)
+		{
+			foreach (T obj in list)
+			{
+				if (string.IsNullOrEmpty(buildingResult))
+				{
+					buildingResult = obj.ToString();
+				}
+				else
+				{
+					buildingResult += string.Format("{0} {1}", seperator, obj.ToString());
+				}
+			}
+			return buildingResult;
+		}
+
+
+		public static string writeVector(Vector3 inputvector)
+		{
+			List<float> components = new List<float>();
+			string output = string.Empty;
+
+			components.Add(inputvector.x);
+			components.Add(inputvector.y);
+			components.Add(inputvector.z);
+
+			output = loadListIntoString(output, components, Constants.weldedMeshSwitchSubSplitter);
+
+			return output;
 		}
 
 

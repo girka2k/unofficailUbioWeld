@@ -32,7 +32,7 @@ namespace UbioWeldingLtd
 				{
 					if (newModuleName.Equals(existingNewModule.GetValue(existingNewModule.values.DistinctNames()[0])))
 					{
-						if (!WeldingHelpers.isArrayContaing(newModuleName, UbioZurWeldingLtd.instance.config.modulesToMultiply))
+						if (!WeldingHelpers.isArrayContaining(newModuleName, UbioZurWeldingLtd.instance.config.modulesToMultiply))
 						{
 							Debugger.AdvDebug(string.Format("| {0} Module already exists!!!", existingNewModule.GetValue(existingNewModule.values.DistinctNames()[0])), advancedDebugging);
 							if (newModule.values.DistinctNames().Length < 2)
@@ -68,20 +68,14 @@ namespace UbioWeldingLtd
 									}
 									if (exist)
 									{
-										mergeModuleAttributes(newModuleName, newModule, existingNewModule, advancedDebugging);
-										mergeSubModules(newModule, existingNewModule, advancedDebugging);
-										mergeVector2Modules(newModule, existingNewModule);
-										mergeVector4Modules(newModule, existingNewModule);
+										mergeContents(newModuleName, newModule, existingNewModule, advancedDebugging);
 										exist = true;
 										break;
 									}
 								}
 								else
 								{
-									mergeModuleAttributes(newModuleName, newModule, existingNewModule, advancedDebugging);
-									mergeSubModules(newModule, existingNewModule, advancedDebugging);
-									mergeVector2Modules(newModule, existingNewModule);
-									mergeVector4Modules(newModule, existingNewModule);
+									mergeContents(newModuleName, newModule, existingNewModule, advancedDebugging);
 									exist = true;
 									break;
 								}
@@ -92,7 +86,7 @@ namespace UbioWeldingLtd
 				}//foreach (ConfigNode existingNewModule in _modulelist)
 				if (!exist)
 				{
-					if (!WeldingHelpers.isArrayContaing(newModuleName, UbioZurWeldingLtd.instance.config.modulesToIgnore))
+					if (!WeldingHelpers.isArrayContaining(newModuleName, UbioZurWeldingLtd.instance.config.modulesToIgnore))
 					{
 						addNewModule(partname, newModuleName, newModule, modulelist, advancedDebugging);
 					}
@@ -139,7 +133,7 @@ namespace UbioWeldingLtd
 		/// </summary>
 		/// <param name="newModule"></param>
 		/// <param name="existingNewModule"></param>
-		private void mergeVector2Modules(ConfigNode newModule, ConfigNode existingNewModule)
+		private void mergeVector2Modules(ConfigNode newModule, ConfigNode existingNewModule, bool advancedDebugging)
 		{
 			//Debug.LogError(string.Format("{0}| Merging Vector2Modules Start", Constants.logPrefix));
 			foreach (string subModule in UbioZurWeldingLtd.instance.config.vector2CurveModules)
@@ -173,37 +167,87 @@ namespace UbioWeldingLtd
 		/// </summary>
 		/// <param name="newModule"></param>
 		/// <param name="existingNewModule"></param>
+		/// <param name="advancedDebugging"></param>
 		private void mergeSubModules(ConfigNode newModule, ConfigNode existingNewModule, bool advancedDebugging)
 		{
+			bool exist = false;
+			string newSubModuleName = "";
 			//Debug.LogError(string.Format("{0}| Merging SubModules Start", Constants.logPrefix));
+
 			foreach (string subModule in UbioZurWeldingLtd.instance.config.subModules)
 			{
-				if (newModule.HasNode(subModule) || existingNewModule.HasNode(subModule))
+				ConfigNode[] newNodes = newModule.GetNodes(subModule);
+				ConfigNode[] existingNodes = existingNewModule.GetNodes(subModule);
+
+				foreach (ConfigNode newNode in newNodes)
 				{
-					if (existingNewModule.HasNode(subModule) && newModule.HasNode(subModule))
+					newSubModuleName = newNode.GetValue(newNode.values.DistinctNames()[0]);
+
+					foreach (ConfigNode existingNode in existingNodes)
 					{
-						Debugger.AdvDebug("| SubModules in both Modules found", advancedDebugging);
-						ConfigNode existingNewSubModule = existingNewModule.GetNode(subModule);
-						ConfigNode newSubModule = newModule.GetNode(subModule);
-						string newSubmoduleName = existingNewSubModule.name;
-						mergeModuleAttributes(newSubmoduleName, newSubModule, existingNewSubModule, advancedDebugging);
-					}
-					else if (!existingNewModule.HasNode(subModule) && newModule.HasNode(subModule))
-					{
-						Debugger.AdvDebug("| SubModules in one Modules found", advancedDebugging);
-						existingNewModule.AddNode(subModule);
-						ConfigNode newExistingSubModule = existingNewModule.GetNode(subModule);
-						ConfigNode newSubModule = newModule.GetNode(subModule);
-						foreach (string valueName in newSubModule.values.DistinctNames())
+						exist = false;
+						string[] breakingAttributes = new string[newNode.values.DistinctNames().Count()];
+						for (int i = 0; i < newNode.values.DistinctNames().Count(); i++)
 						{
-							newExistingSubModule.AddValue(valueName, newSubModule.GetValue(valueName));
-							Debugger.AdvDebug(string.Format("| {0} = {1}", valueName, newExistingSubModule.GetValue(valueName)), advancedDebugging);
+							breakingAttributes[i] = string.Concat(subModule, Constants.underline, newNode.values.DistinctNames()[i]);
+						}
+						breakingAttributes = WeldingHelpers.getSharedArrayValues(breakingAttributes, UbioZurWeldingLtd.instance.config.breakingModuleAttributes);
+						Debugger.AdvDebug(string.Format("| SubModule BreakingAttributes found = {0} ", breakingAttributes.Length), advancedDebugging);
+
+						if (breakingAttributes.Length > 0)
+						{
+							foreach (string s in breakingAttributes)
+							{
+								string breakingAttribute = s.Replace(string.Concat(subModule, Constants.underline), "");
+								var existingValue = existingNode.GetValue(breakingAttribute);
+								var newValue = newNode.GetValue(breakingAttribute);
+								Debugger.AdvDebug(string.Format("| SubModule BreakingAttributes found | current one is {0} | ExistingValue = {1} - NewValue = {2}", breakingAttribute, existingValue, newValue), advancedDebugging);
+								exist = Equals(existingValue, newValue);
+								if (!exist)
+								{
+									break;
+								}
+							}
+							if (exist)
+							{
+								mergeContents(newSubModuleName, newNode, existingNode, advancedDebugging);
+								exist = true;
+								break;
+							}
+						}
+						else
+						{
+							mergeContents(newSubModuleName, newNode, existingNode, advancedDebugging);
+							exist = true;
+							break;
+						}
+					}
+					if (!exist)
+					{
+						if (!WeldingHelpers.isArrayContaining(newSubModuleName, UbioZurWeldingLtd.instance.config.modulesToIgnore))
+						{
+							existingNewModule.AddNode(newNode);
 						}
 					}
 				}
 			}
 			//Debug.LogError(string.Format("{0}| Merging SubModules End", Constants.logPrefix));
 		}
+
+		private void mergeContents(string newSubModuleName, ConfigNode newNode, ConfigNode existingNode, bool advancedDebugging)
+		{
+			Debugger.AdvDebug(string.Format("Pre mergeModuleAttributes"), advancedDebugging);
+			mergeModuleAttributes(newSubModuleName, newNode, existingNode, advancedDebugging);
+			Debugger.AdvDebug(string.Format("Pre mergeSubModules"), advancedDebugging);
+			mergeSubModules(newNode, existingNode, advancedDebugging);
+			Debugger.AdvDebug(string.Format("Pre mergeVector2Modules"), advancedDebugging);
+			mergeVector2Modules(newNode, existingNode, advancedDebugging);
+			Debugger.AdvDebug(string.Format("Pre mergeVector4Modules"), advancedDebugging);
+			mergeVector4Modules(newNode, existingNode);
+			Debugger.AdvDebug(string.Format("Values done"), advancedDebugging);
+		}
+
+
 
 
 		/// <summary>
@@ -298,11 +342,11 @@ namespace UbioWeldingLtd
 			//Debug.LogWarning(string.Format("{0}| {1} - {2} is float", Constants.logPrefix, newModuleName, ModuleAttribute));
 #endif
 			//merge float values if they are allowed
-			if (!WeldingHelpers.isArrayContaing(string.Concat(newModuleName, Constants.underline, ModuleAttribute), UbioZurWeldingLtd.instance.config.unchangedModuleAttributes))
+			if (!WeldingHelpers.isArrayContaining(string.Concat(newModuleName, Constants.underline, ModuleAttribute), UbioZurWeldingLtd.instance.config.unchangedModuleAttributes))
 			{
 				if (newModule.HasValue(ModuleAttribute) || existingNewModule.HasValue(ModuleAttribute))
 				{
-					float newValue = float.Parse(newModule.GetValue(ModuleAttribute));
+					float newValue = float.TryParse(newModule.GetValue(ModuleAttribute), out newValue) == false ? float.Parse(existingNewModule.GetValue(ModuleAttribute)) : float.Parse(newModule.GetValue(ModuleAttribute));
 					Debugger.AdvDebug(string.Format("| {0} - newValue - {1} = {2}", newModuleName, ModuleAttribute, newValue), advancedDebugging);
 
 					if (existingNewModule.HasValue(ModuleAttribute) && newModule.HasValue(ModuleAttribute))
@@ -310,22 +354,31 @@ namespace UbioWeldingLtd
 						float existingValue = float.Parse(existingNewModule.GetValue(ModuleAttribute));
 						Debugger.AdvDebug(string.Format("| {0} - existingValue - {1} = {2}", newModuleName, ModuleAttribute, existingValue), advancedDebugging);
 
-						if (WeldingHelpers.isArrayContaing(string.Concat(newModuleName, Constants.underline, ModuleAttribute), UbioZurWeldingLtd.instance.config.maximizedModuleAttributes))
+						if (WeldingHelpers.isArrayContaining(string.Concat(newModuleName, Constants.underline, ModuleAttribute), UbioZurWeldingLtd.instance.config.maximizedModuleAttributes))
 						{
 							Debugger.AdvDebug(string.Format("| {0} - {1} - maximized", newModuleName, ModuleAttribute), advancedDebugging);
 							existingNewModule.SetValue(ModuleAttribute, (existingValue > newValue ? existingValue : newValue).ToString());
 						}
 						else
 						{
-							if (WeldingHelpers.isArrayContaing(string.Concat(newModuleName, Constants.underline, ModuleAttribute), UbioZurWeldingLtd.instance.config.averagedModuleAttributes) && (newValue != 0 && existingValue != 0))
+							if (WeldingHelpers.isArrayContaining(string.Concat(newModuleName, Constants.underline, ModuleAttribute), UbioZurWeldingLtd.instance.config.minimizedModuleAttributes))
 							{
-								Debugger.AdvDebug(string.Format("| {0} - {1} - averaged", newModuleName, ModuleAttribute), advancedDebugging);
-								existingNewModule.SetValue(ModuleAttribute, ((newValue + existingValue) * 0.5f).ToString());
+								Debugger.AdvDebug(string.Format("| {0} - {1} - minimized", newModuleName, ModuleAttribute), advancedDebugging);
+								existingNewModule.SetValue(ModuleAttribute, (existingValue < newValue ? existingValue : newValue).ToString());
 							}
 							else
 							{
-								Debugger.AdvDebug(string.Format("| {0} - {1} - added", newModuleName, ModuleAttribute), advancedDebugging);
-								existingNewModule.SetValue(ModuleAttribute, (newValue + existingValue).ToString());
+
+								if (WeldingHelpers.isArrayContaining(string.Concat(newModuleName, Constants.underline, ModuleAttribute), UbioZurWeldingLtd.instance.config.averagedModuleAttributes) && (newValue != 0 && existingValue != 0))
+								{
+									Debugger.AdvDebug(string.Format("| {0} - {1} - averaged", newModuleName, ModuleAttribute), advancedDebugging);
+									existingNewModule.SetValue(ModuleAttribute, ((newValue + existingValue) * 0.5f).ToString());
+								}
+								else
+								{
+									Debugger.AdvDebug(string.Format("| {0} - {1} - added", newModuleName, ModuleAttribute), advancedDebugging);
+									existingNewModule.SetValue(ModuleAttribute, (newValue + existingValue).ToString());
+								}
 							}
 						}
 					}

@@ -1,6 +1,6 @@
 {
-    "NAME":"UbioWeldingLtd",
-    "URL":"https://raw.githubusercontent.com/UbioWeldingLtd/UbioWeldContinued/dev-0.90/GameData/UbioWeldingLtd/UbioWeldingLtd.version",
+    "NAME":"UbioWeldingLtd-Continued",
+    "URL":"https://raw.githubusercontent.com/UbioWeldingLtd/UbioWeldContinued/dev-1.0/GameData/UbioWeldingLtd/UbioWeldingLtd.version",
     "GITHUB":
     {
         "USERNAME":"UbioWeldingLtd",
@@ -10,26 +10,26 @@
     "VERSION":
     {
         "MAJOR":2,
-        "MINOR":1,
-        "PATCH":1,
+        "MINOR":5,
+        "PATCH":4,
         "BUILD":0
     },
     "KSP_VERSION":
     {
-        "MAJOR":0,
-        "MINOR":90,
+        "MAJOR":1,
+        "MINOR":8,
         "PATCH":0
     },
     "KSP_VERSION":
     {
-        "MAJOR":0,
-        "MINOR":90,
+        "MAJOR":1,
+        "MINOR":8,
         "PATCH":0
     },
     "KSP_VERSION_MAX":
     {
-        "MAJOR":0,
-        "MINOR":90,
-        "PATCH":0
+        "MAJOR":1,
+        "MINOR":8,
+        "PATCH":9
     }
 } 

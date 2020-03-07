@@ -2,13 +2,19 @@
 <ModuleAttributeLists xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="KSP-Forum">
   <Vector2CurveModules>
     <ModuleAttribute AttributeName="atmosphereCurve" />
+	<ModuleAttribute AttributeName="alphaCurve" />
   </Vector2CurveModules>
   <Vector4CurveModules>
     <ModuleAttribute AttributeName="velocityCurve" />
+    <ModuleAttribute AttributeName="powerCurve" />
+	<ModuleAttribute AttributeName="redCurve" />
+	<ModuleAttribute AttributeName="greenCurve" />
+	<ModuleAttribute AttributeName="blueCurve" />
   </Vector4CurveModules>
   <SubModules>
     <ModuleAttribute AttributeName="RESOURCE" />
     <ModuleAttribute AttributeName="OUTPUT_RESOURCE" />
+    <ModuleAttribute AttributeName="INPUT_RESOURCE" />
     <ModuleAttribute AttributeName="PROPELLANT" />
   </SubModules>
   <ModulesToIgnore>
@@ -31,14 +37,45 @@
     <ModuleAttribute AttributeName="ModuleTweakableRCS" />
     <ModuleAttribute AttributeName="ModuleTweakableSolarPanel" />
     <ModuleAttribute AttributeName="CModuleStrut" />
+    <ModuleAttribute AttributeName="CModuleFuelLine" />
     <ModuleAttribute AttributeName="CModuleLinkedMesh" />
+    <ModuleAttribute AttributeName="InterstellarMeshSwitch" />
+    <ModuleAttribute AttributeName="InterstellarFuelSwitch" />
+    <ModuleAttribute AttributeName="FSfuelSwitch" />
+    <ModuleAttribute AttributeName="ModuleConnectedLivingSpace" />
+    <ModuleAttribute AttributeName="ModuleTweakableJettison" />
+    <ModuleAttribute AttributeName="ModuleTweakableReactionWheel" />
+    <ModuleAttribute AttributeName="ModuleTweakableSAS" />
+    <ModuleAttribute AttributeName="PilotRSASFix" />
+    <ModuleAttribute AttributeName="ModuleTweakableFuelPump" />
+    <ModuleAttribute AttributeName="CrewManifestModule" />
+    <ModuleAttribute AttributeName="FARPartModule" />
+    <ModuleAttribute AttributeName="FARAeroPartModule" />
+    <ModuleAttribute AttributeName="GeometryPartModule" />
+	<ModuleAttribute AttributeName="ModuleJettison" />
+	<ModuleAttribute AttributeName="SCANRPMStorage" />
+    <ModuleAttribute AttributeName="ModuleTCA" />
+	<ModuleAttribute AttributeName="ModuleB9PartSwitch" />
+	<ModuleAttribute AttributeName="ModuleB9PartInfo" />
+    <ModuleAttribute AttributeName="WeldedMeshSwitch" />
+	<ModuleAttribute AttributeName="WeldedFlagDecal" />
   </ModulesToIgnore>
   <ModulesToMultiply>
     <ModuleAttribute AttributeName="AntimatterCollector" />
   </ModulesToMultiply>
   <MaximizedModuleAttributes>
     <ModuleAttribute AttributeName="ModuleSAS_SASServiceLevel" />
+	<ModuleAttribute AttributeName="ModuleKerbNetAccess_EnhancedMaximumFoV" />
+	<ModuleAttribute AttributeName="ModuleKerbNetAccess_MaximumFoV" />
+	<ModuleAttribute AttributeName="ModuleResourceScanner_MaxAbundanceAltitude" />
+	<ModuleAttribute AttributeName="ModuleReactionWheel_torqueResponseSpeed" />
   </MaximizedModuleAttributes>
+  <MinimizedModuleAttributes>
+	<ModuleAttribute AttributeName="ModuleCommand_minimumCrew" />
+	<ModuleAttribute AttributeName="ModuleKerbNetAccess_EnhancedMinimumFoV" />
+	<ModuleAttribute AttributeName="ModuleKerbNetAccess_MinimumFoV" />
+	<ModuleAttribute AttributeName="ModuleResourceConverter_FillAmount" />
+  </MinimizedModuleAttributes>
   <AveragedModuleAttributes>
     <ModuleAttribute AttributeName="FNAntimatterReactor_ReactorTemp" />
     <ModuleAttribute AttributeName="FNAntimatterReactor_upgradedReactorTemp" />
@@ -59,6 +96,15 @@
   <BreakingModuleAttributes>
     <ModuleAttribute AttributeName="FNAntimatterReactor_radius" />
     <ModuleAttribute AttributeName="ModuleScienceExperiment_experimentID" />
+    <ModuleAttribute AttributeName="DMModuleScienceAnimate_experimentID" />
+    <ModuleAttribute AttributeName="ModuleDeployableSolarPanel_animationName" />
+    <ModuleAttribute AttributeName="ModuleFuelTanks_type" />
+    <ModuleAttribute AttributeName="FlagDecal_textureQuadName" />
+    <ModuleAttribute AttributeName="OUTPUT_RESOURCE_ResourceName" />
+    <ModuleAttribute AttributeName="INPUT_RESOURCE_ResourceName" />
+	<ModuleAttribute AttributeName="UPGRADE_name__" />
+	<ModuleAttribute AttributeName="PROPELLANT_name" />
+	<ModuleAttribute AttributeName="ModuleEnviroSensor_sensorType" />
   </BreakingModuleAttributes>
 </ModuleAttributeLists>
 <!-- The ModuleAttributeList.xml gives you the ability to edit how the Weldingtool will process the merging of certain modules and their attributes. -->

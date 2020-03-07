@@ -11,7 +11,7 @@ namespace UbioWeldingLtd
 	static class Constants
 	{
 		//Logs/debug constants
-		public const string logVersion ="v2.1.1 - 0.90.0 - Continued";
+		public const string logVersion ="v2.5.4.0 - 1.8.0 - Continued";
 		public const string logWarning		  = "WARNING ";
 		public const string logError			= "ERROR ";
 		public const string logPrefix		   = "[WeldingTool] ";
@@ -44,14 +44,15 @@ namespace UbioWeldingLtd
 		public const int guiInfoWindowX		 = 300;
 		public const int guiInfoWindowY		 = 150;
 		public const int guiInfoWindowW		 = 705;
-		public const int guiInfoWindowH		 = 345;
+		public const int guiInfoWindowH		 = 445;
         public const int guiMainWindowW     = 300;
-		public const int guiMainWindowH		= 260;
-		public const int guiMainWindowHSettingsExpanded = 650;
+		public const int guiMainWindowH		= 285;
+		public const int guiMainWindowHSettingsExpanded = 675;
 		public const int guiScreenEdgeClearance = 80;
 		public const string guiDialFail		 = "We are sorry to announce that our engineer could not perform this weld.\n Please read the report (ALt+F2 or ksp.log) for more details)";
 		public const string guiDialWarn		 = "After welding everything, out Engineer had some extra feature that they didn't knew where to put.\n Please read the report (ALt+F2 or ksp.log) for more details)";
 		public const string guiNameUsed		 = "Name already used by another part!";
+		public const string guiSymmetryNotNumbered = "Symmetry value is not a number!";
 		public const string guiDialOverwrite	= "File already exist, Do you want to overwrite it?";
 		public const string guiDialSaved		= "New part saved and shipped!";
 		public const string guiDBReloading1		= "Database reloading";
@@ -125,26 +126,39 @@ namespace UbioWeldingLtd
 		public const string msgWarnModLandLegs  = "Multiple ModuleLandingLeg with the same animName is not supported by the game";
 
 		//Weld
-		public const string weldPartPath		= "GameData/UbioWeldingLtd/Parts/";
-		public const string weldPartDefaultFile	= "/part.cfg";
-		public const string weldAuthor		  = "UbioZurWeldingLtd";
-		public const string weldManufacturer	= "UbioZur Welding Ltd";
-		public const string weldDefaultName	 = "weldedpart";
-		public const string weldDefaultTitle	= "My welded part";
-		public const string weldDefaultDesc	 = "Warranty void during re-entry.";
-		public const string weldPartNode		= "PART";
-		public const string weldModelNode	   = "MODEL";
-		public const string weldResNode		 = "RESOURCE";
-		public const string weldModuleNode	  = "MODULE";
-		public const string weldOutResNode	  = "OUTPUT_RESOURCE";
-		public const string weldEngineProp	  = "PROPELLANT";
-		public const string weldEngineAtmCurve  = "atmosphereCurve";
+		public const string weldPartPath = "GameData/UbioWeldingLtd/Parts/";
+		public const string weldPartDefaultFile = "/part.cfg";
+		public const string weldPartInternalDefaultFile = "/internal.cfg";
+		public const string weldAuthor = "UbioZurWeldingLtd";
+		public const string weldManufacturer = "UbioZur Welding Ltd";
+		public const string weldDefaultName = "weldedpart";
+		public const string weldDefaultTitle = "My welded part";
+		public const string weldDefaultDesc = "Warranty void during re-entry.";
+		public const string weldPartNode = "PART";
+		public const string weldModelNode = "MODEL";
+		public const string weldResNode = "RESOURCE";
+		public const string weldModuleNode = "MODULE";
+		public const string weldInternalNode = "INTERNAL";
+		public const string weldPropNode = "PROP";
+		public const string weldModuleNodeName = "name";
+		public const string weldOffsetName = "offset";
+		public const string weldOutResNode = "OUTPUT_RESOURCE";
+		public const string weldEngineProp = "PROPELLANT";
+		public const string weldEngineAtmCurve = "atmosphereCurve";
 		public const string weldEngineVelCurve = "velocityCurve";
-		public const string weldSubcat		  = "0";
-		public const float weldRescaleFactor	= 1.0f;
-		public const int weldDefaultPysicsSign  = -1;
-		public const int weldDefaultEntryCost   = 0;
-		public const int weldNumberOfFractionalDigits = 5;
+		public const string weldSubcat = "0";
+		public const float weldRescaleFactor = 1.0f;
+		public const int weldDefaultPysicsSign = -1;
+		public const int weldDefaultEntryCost = 0;
+
+		public const string weldedMeshSwitchSubSplitter = ",";
+		public const string weldedMeshSwitchSplitter = ";";
+		public static string[] interstellarMeshSwitchModule = { "InterstellarMeshSwitch", "ModuleB9PartSwitch", weldedmeshSwitchModule };
+		public const string weldedmeshSwitchModule = "WeldedMeshSwitch";
+
+		public const string originalDecalModule = "FlagDecal";
+		public const string weldedDecalModule = "WeldedFlagDecal";
+		public const string weldedDecalModuleValueName = "textureQuadName";
 
 		//module name
 		public const string modStockSas		 = "ModuleSAS";
@@ -196,43 +210,70 @@ namespace UbioWeldingLtd
 
 		public static string[] basicVector2CurveModules =
 		{
-			"atmosphereCurve"
+			"atmosphereCurve",
+			"alphaCurve"
 		};
 
 		public static string[] basicVector4CurveModules =
 		{
-			"velocityCurve"
+			"velocityCurve",
+			"powerCurve",
+			"redCurve",
+			"greenCurve",
+			"blueCurve",
 		};
 
 		public static string[] basicSubModules =
 		{
 			"RESOURCE",
 			"OUTPUT_RESOURCE",
+			"INPUT_RESOURCE",
 			"PROPELLANT"
 		};
 
-		public static string[] basicModulesToIgnore = 
+		public static string[] basicModulesToIgnore =
 		{
 			"TweakScale",
-			"FMRS_PM",   
-			"Variometer",   
-			"TrajectoriesVesselSettings",   
-			"TelemachusDataLink",   
-			"TelemachusPowerDrain",   
-			"ProbeControlRoomPart",   
-			"RasterPropMonitorComputer",   
-			"Proximity",   
-			"LazorSystemDockingCamera",   
-			"ModuleDockingNodeController",   
-			"ModuleDockingNodeNamed",   
-			"ModuleStagingToggle",   
-			"GoodspeedPump",   
-			"ModuleTweakableDockingNode",   
-			"KASModuleGrab",   
-			"ModuleTweakableRCS",   
+			"FMRS_PM",
+			"Variometer",
+			"TrajectoriesVesselSettings",
+			"TelemachusDataLink",
+			"TelemachusPowerDrain",
+			"ProbeControlRoomPart",
+			"RasterPropMonitorComputer",
+			"Proximity",
+			"LazorSystemDockingCamera",
+			"ModuleDockingNodeController",
+			"ModuleDockingNodeNamed",
+			"ModuleStagingToggle",
+			"GoodspeedPump",
+			"ModuleTweakableDockingNode",
+			"KASModuleGrab",
+			"ModuleTweakableRCS",
 			"ModuleTweakableSolarPanel",
 			"CModuleStrut",
-			"CModuleLinkedMesh"
+			"CModuleFuelLine",
+			"CModuleLinkedMesh",
+			"InterstellarMeshSwitch",
+			"InterstellarFuelSwitch",
+			"FSfuelSwitch",
+			"ModuleConnectedLivingSpace",
+			"ModuleTweakableJettison",
+			"ModuleTweakableReactionWheel",
+			"ModuleTweakableSAS",
+			"PilotRSASFix",
+			"ModuleTweakableFuelPump",
+			"CrewManifestModule",
+			"FARPartModule",
+			"FARAeroPartModule",
+			"GeometryPartModule",
+			"ModuleJettison",
+			"SCANRPMStorage",
+			"ModuleTCA",
+			"ModuleB9PartSwitch",
+			"ModuleB9PartInfo",
+			weldedmeshSwitchModule,
+			weldedDecalModule
 		};
 
 		public static string[] basicModulesToMultiply =   
@@ -242,7 +283,19 @@ namespace UbioWeldingLtd
 
 		public static string[] basicMaximizedModuleAttributes =   
 		{   
-			"ModuleSAS_SASServiceLevel"
+			"ModuleSAS_SASServiceLevel",
+			"ModuleKerbNetAccess_EnhancedMaximumFoV",
+			"ModuleKerbNetAccess_MaximumFoV",
+			"ModuleResourceScanner_MaxAbundanceAltitude",
+			"ModuleReactionWheel_torqueResponseSpeed"
+		};
+
+		public static string[] basicMinimizedModuleAttributes =
+		{
+			"ModuleCommand_minimumCrew",
+			"ModuleKerbNetAccess_EnhancedMinimumFoV",
+			"ModuleKerbNetAccess_MinimumFoV",
+			"ModuleResourceConverter_FillAmount"
 		};
 
 		public static string[] basicAveragedModuleAttributes =
@@ -269,7 +322,16 @@ namespace UbioWeldingLtd
 		public static string[] basicBreakingModuleAttributes = 
 		{
 			"FNAntimatterReactor_radius",
-			"ModuleScienceExperiment_experimentID"
+			"ModuleScienceExperiment_experimentID",
+			"DMModuleScienceAnimate_experimentID",
+			"ModuleDeployableSolarPanel_animationName",
+			"ModuleFuelTanks_type",
+			"FlagDecal_textureQuadName",
+			"OUTPUT_RESOURCE_ResourceName",
+			"INPUT_RESOURCE_ResourceName",
+			"UPGRADE_name__",
+			"PROPELLANT_name",
+			"ModuleEnviroSensor_sensorType"
 		};
 
 		public static string CommentOutText(string text)
@@ -286,7 +348,10 @@ namespace UbioWeldingLtd
 		public static GUIContent guiWeldItButtonGUIContent = new GUIContent("Weld it", "Press \"Weld it\" button to weld whole craft or selected part of it");
 		public static GUIContent guiClearEditorGUIContent = new GUIContent("Clear editor after welding", "Clear editor after welding");
 		public static GUIContent guiAdvancedDebugGUIContent = new GUIContent("Advanced debug", "SPAM KSP.log with additional debug info");
+		public static GUIContent guiFileSimplificationGUIContent = new GUIContent("File Simplification", "tries to reduce the new part config file by removing certain config lines (for experienced config modders)");
 		public static GUIContent guiSelectPartGUIContent = new GUIContent("Select partbranch", "use 'ctrl + click' to select the partbranch that you want to weld into a new part, if no part is selected the whole craft will be welded");
+		public static GUIContent guiCloseGUIContent = new GUIContent("Close", "Closes the welding menu");
+		public static GUIContent guiSettingsGUIContent = new GUIContent("Settings", "Show/hide settings");
 
 		public static GUIContent[] StrengthParamsCalcMethodsGUIContent = 
 		{

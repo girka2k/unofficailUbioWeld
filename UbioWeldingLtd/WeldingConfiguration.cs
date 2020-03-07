@@ -1,10 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Xml;
-using System.Xml.Serialization;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Xml.Serialization;
 using UnityEngine;
 
 namespace UbioWeldingLtd
@@ -33,6 +27,7 @@ namespace UbioWeldingLtd
 
 		private int _MainWindowXPosition = (Screen.width - Constants.guiMainWindowW) / 2;
 		private int _MainWindowYPosition = (Screen.height - Constants.guiMainWindowH) / 2;
+		private int _precisionDigits = 6;
 		private bool _dataBaseAutoReload = false;
 		private bool _includeAllNodes = false;
 		private bool _allowCareerMode = true;
@@ -44,12 +39,14 @@ namespace UbioWeldingLtd
 		private MaxTempCalcMethod _MaxTempCalcMethod = MaxTempCalcMethod.Lowest;
 		private bool _clearEditor = true;
 		private bool _advancedDebug = false;
+		private bool _fileSimplification = false;
 		private string[] _vector2CurveModules;
 		private string[] _vector4CurveModules;
 		private string[] _subModules;
 		private string[] _modulesToIgnore;
 		private string[] _modulesToMultiply;
 		private string[] _maximizedModuleAttributes;
+		private string[] _minimizedModuleAttributes;
 		private string[] _averagedModuleAttributes;
 		private string[] _unchangedModuleAttributes;
 		private string[] _breakingModuleAttributes;
@@ -64,6 +61,12 @@ namespace UbioWeldingLtd
 		{
 			get { return _MainWindowYPosition; }
 			set { _MainWindowYPosition = value; }
+		}
+
+		public int precisionDigits
+		{
+			get { return _precisionDigits; }
+			set { _precisionDigits = value; }
 		}
 
 		public bool dataBaseAutoReload
@@ -131,7 +134,13 @@ namespace UbioWeldingLtd
 			get { return _advancedDebug; }
 			set { _advancedDebug = value; }
 		}
-		
+
+		public bool fileSimplification
+		{
+			get { return _fileSimplification; }
+			set { _fileSimplification = value; }
+		}
+
 		public string[] vector2CurveModules
 		{
 			get { return _vector2CurveModules; }
@@ -166,6 +175,12 @@ namespace UbioWeldingLtd
 		{
 			get { return _maximizedModuleAttributes; }
 			set { _maximizedModuleAttributes = value; }
+		}
+
+		public string[] minimizedModuleAttributes
+		{
+			get { return _minimizedModuleAttributes; }
+			set { _minimizedModuleAttributes = value; }
 		}
 
 		public string[] averagedModuleAttributes

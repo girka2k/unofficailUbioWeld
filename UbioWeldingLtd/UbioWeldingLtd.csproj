@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>UbioWeldingLtd</RootNamespace>
     <AssemblyName>UbioWeldingLtd</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -31,23 +31,105 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Assembly-CSharp, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Assembly-CSharp, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\AssemblyReferences\1.0\Assembly-CSharp.dll</HintPath>
+      <HintPath>D:\Games\KSP Source Projects\AssemblyReferences\1.8.0\Assembly-CSharp.dll</HintPath>
     </Reference>
     <Reference Include="Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\AssemblyReferences\1.0\Assembly-CSharp-firstpass.dll</HintPath>
+      <HintPath>D:\Games\KSP Source Projects\AssemblyReferences\1.8.0\Assembly-CSharp-firstpass.dll</HintPath>
+    </Reference>
+    <Reference Include="KSPAssets, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>D:\Games\KSP Source Projects\AssemblyReferences\1.8.0\KSPAssets.dll</HintPath>
+    </Reference>
+    <Reference Include="KSPAssets.XmlSerializers">
+      <HintPath>D:\Games\KSP Source Projects\AssemblyReferences\1.8.0\KSPAssets.XmlSerializers.dll</HintPath>
+    </Reference>
+    <Reference Include="KSPTrackIR, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>D:\Games\KSP Source Projects\AssemblyReferences\1.8.0\KSPTrackIR.dll</HintPath>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Core" />
+    <Reference Include="System.Configuration">
+      <HintPath>D:\Games\KSP Source Projects\AssemblyReferences\1.8.0\System.Configuration.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Security" />
+    <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
-    <Reference Include="UnityEngine, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\AssemblyReferences\1.0\UnityEngine.dll</HintPath>
+    <Reference Include="UnityEngine.AccessibilityModule">
+      <HintPath>D:\Games\KSP Source Projects\AssemblyReferences\1.8.0\UnityEngine.AccessibilityModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.AnimationModule">
+      <HintPath>D:\Games\KSP Source Projects\AssemblyReferences\1.8.0\UnityEngine.AnimationModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.AudioModule">
+      <HintPath>D:\Games\KSP Source Projects\AssemblyReferences\1.8.0\UnityEngine.AudioModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.ClusterInputModule">
+      <HintPath>D:\Games\KSP Source Projects\AssemblyReferences\1.8.0\UnityEngine.ClusterInputModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.ClusterRendererModule">
+      <HintPath>D:\Games\KSP Source Projects\AssemblyReferences\1.8.0\UnityEngine.ClusterRendererModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>D:\Games\KSP Source Projects\AssemblyReferences\1.8.0\UnityEngine.CoreModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.FileSystemHttpModule">
+      <HintPath>D:\Games\KSP Source Projects\AssemblyReferences\1.8.0\UnityEngine.FileSystemHttpModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.GameCenterModule">
+      <HintPath>D:\Games\KSP Source Projects\AssemblyReferences\1.8.0\UnityEngine.GameCenterModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.GridModule">
+      <HintPath>D:\Games\KSP Source Projects\AssemblyReferences\1.8.0\UnityEngine.GridModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.HotReloadModule">
+      <HintPath>D:\Games\KSP Source Projects\AssemblyReferences\1.8.0\UnityEngine.HotReloadModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.ImageConversionModule">
+      <HintPath>D:\Games\KSP Source Projects\AssemblyReferences\1.8.0\UnityEngine.ImageConversionModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.IMGUIModule">
+      <HintPath>D:\Games\KSP Source Projects\AssemblyReferences\1.8.0\UnityEngine.IMGUIModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.InputLegacyModule">
+      <HintPath>D:\Games\KSP Source Projects\AssemblyReferences\1.8.0\UnityEngine.InputLegacyModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.InputModule">
+      <HintPath>D:\Games\KSP Source Projects\AssemblyReferences\1.8.0\UnityEngine.InputModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.JSONSerializeModule">
+      <HintPath>D:\Games\KSP Source Projects\AssemblyReferences\1.8.0\UnityEngine.JSONSerializeModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.ParticleSystemModule">
+      <HintPath>D:\Games\KSP Source Projects\AssemblyReferences\1.8.0\UnityEngine.ParticleSystemModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.PhysicsModule">
+      <HintPath>D:\Games\KSP Source Projects\AssemblyReferences\1.8.0\UnityEngine.PhysicsModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.StreamingModule">
+      <HintPath>D:\Games\KSP Source Projects\AssemblyReferences\1.8.0\UnityEngine.StreamingModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.TextRenderingModule">
+      <HintPath>D:\Games\KSP Source Projects\AssemblyReferences\1.8.0\UnityEngine.TextRenderingModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.UIElementsModule">
+      <HintPath>D:\Games\KSP Source Projects\AssemblyReferences\1.8.0\UnityEngine.UIElementsModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.UmbraModule">
+      <HintPath>D:\Games\KSP Source Projects\AssemblyReferences\1.8.0\UnityEngine.UmbraModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.UNETModule">
+      <HintPath>D:\Games\KSP Source Projects\AssemblyReferences\1.8.0\UnityEngine.UNETModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.UnityConnectModule">
+      <HintPath>D:\Games\KSP Source Projects\AssemblyReferences\1.8.0\UnityEngine.UnityConnectModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.VFXModule">
+      <HintPath>D:\Games\KSP Source Projects\AssemblyReferences\1.8.0\UnityEngine.VFXModule.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -63,9 +145,13 @@
     <Compile Include="GUIDropdown.cs" />
     <Compile Include="DatabaseHandler.cs" />
     <Compile Include="ModuleLists.cs" />
+    <Compile Include="OnscreenDebugger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StyledGUIContent.cs" />
     <Compile Include="UbioZurWeldingLtd.cs" />
+    <Compile Include="WeldedFlagDecal.cs" />
+    <Compile Include="WeldedMeshSwitch.cs" />
+    <Compile Include="WeldedParseTools.cs" />
     <Compile Include="Welder.cs" />
     <Compile Include="WeldingConfiguration.cs" />
     <Compile Include="WeldingHelpers.cs" />
